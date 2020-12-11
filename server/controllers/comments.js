@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const Comment = require("../models/Comment");
 
+// thêm đánh giá
 const addComment = async (req, res) => {
   try {
     const { content, productId } = req.body;
@@ -29,6 +30,7 @@ const addComment = async (req, res) => {
   }
 };
 
+// thêm phản hồi đánh giá
 const addReplyComment = async (req, res) => {
   try {
     const { content, commentId } = req.body;

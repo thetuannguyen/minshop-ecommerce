@@ -1,3 +1,5 @@
+// định nghĩa banner route
+
 const router = require("express").Router();
 
 const { bannerController } = require("../controllers");
@@ -15,7 +17,5 @@ router
   );
 
 router.route("/:id").delete(isAuth, isAdmin, bannerController.deleteOne);
-
-// router.route("/admin").get(isAuth, isAdmin, bannerController.getAllByAdmin);
 
 module.exports = router;

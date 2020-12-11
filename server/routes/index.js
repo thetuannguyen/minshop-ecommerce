@@ -1,3 +1,5 @@
+// combine all route
+
 const authRoute = require("./auth");
 const userRoute = require("./users");
 const brandRoute = require("./brands");

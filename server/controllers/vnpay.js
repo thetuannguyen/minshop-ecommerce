@@ -6,6 +6,7 @@ let test = (req, res) => {
   res.send("Test vnpay route");
 };
 
+// tạo url thanh toán
 let postCreatePaymentUrl = (req, res) => {
   try {
     let ipAddr =
@@ -70,6 +71,7 @@ let postCreatePaymentUrl = (req, res) => {
   }
 };
 
+// kiểm tra url trả về
 let checkReturnUrl = (req, res) => {
   try {
     let vnp_Params = req.query;
@@ -100,6 +102,7 @@ let checkReturnUrl = (req, res) => {
   }
 };
 
+// sort object
 function sortObject(o) {
   var sorted = {},
     key,

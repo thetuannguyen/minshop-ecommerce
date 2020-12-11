@@ -5,6 +5,7 @@ const Order = require("../models/Order");
 const OrderHistory = require("../models/OrderHistory");
 const { sendMailOrder } = require("../services/nodemailer");
 
+// thêm 1 đơn hàng
 const addOne = async (req, res) => {
   try {
     const { coupon } = req.body;
@@ -39,6 +40,7 @@ const addOne = async (req, res) => {
   }
 };
 
+// lấy tất cả đơn hàng của user
 const getAllOfUser = async (req, res) => {
   try {
     const orders = await Order.aggregate([
@@ -66,6 +68,7 @@ const getAllOfUser = async (req, res) => {
   }
 };
 
+// thêm đơn hàng không cần đăng nhập
 const addOneNoAuth = async (req, res) => {
   try {
     const newOrder = new Order({ ...req.body });
@@ -86,6 +89,7 @@ const addOneNoAuth = async (req, res) => {
   }
 };
 
+// thêm một đơn hàng nháp bởi admin
 const addOneByAdmin = async (req, res) => {
   try {
     const newOrder = new Order({ ...req.body, isCreatedByAdmin: true });
@@ -109,6 +113,7 @@ const addOneByAdmin = async (req, res) => {
   }
 };
 
+// lấy tất cả đơn hàng
 const getAll = async (req, res) => {
   try {
     const orders = await Order.find()
@@ -121,6 +126,7 @@ const getAll = async (req, res) => {
   }
 };
 
+// hủy đơn hàng
 const cancelOrder = async (req, res) => {
   try {
     const { id } = req.params;
@@ -150,6 +156,7 @@ const cancelOrder = async (req, res) => {
   }
 };
 
+// cập nhật đơn hàng
 const updateOrder = async (req, res) => {
   try {
     const { id } = req.params;
@@ -289,6 +296,7 @@ const updateOrder = async (req, res) => {
   }
 };
 
+// xóa đơn hàng
 const deleteOne = async (req, res) => {
   try {
     const { id } = req.params;
@@ -305,6 +313,7 @@ const deleteOne = async (req, res) => {
   }
 };
 
+// lấy lịch sử của một đơn hàng bằng orderId
 const getHistoriesByOrderId = async (req, res) => {
   try {
     const histories = await OrderHistory.find({ order: req.params.id }).sort({
@@ -317,17 +326,10 @@ const getHistoriesByOrderId = async (req, res) => {
   }
 };
 
+// lấy báo cáo đơn hàng theo ngày, tháng, năm
 const getStatisticalOrders = async (req, res) => {
   try {
     const orders = await Order.aggregate([
-      // {
-      //   $match: {
-      //     $and: [
-      //       { created_date: { $gte: start_date } },
-      //       { created_date: { $lte: end_date } },
-      //     ],
-      //   },
-      // },
       {
         $group: {
           _id: {
@@ -353,8 +355,6 @@ const getStatisticalOrders = async (req, res) => {
 
     res.json(orders);
   } catch (error) {
-    console.log("---------------");
-    console.log(error);
     return res.status(500).json(error);
   }
 };

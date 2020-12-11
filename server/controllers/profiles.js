@@ -4,30 +4,9 @@ const argon2 = require("argon2");
 const Address = require("../models/Address");
 const User = require("../models/User");
 
+// cập nhật thông tin các nhân
 const updateProfile = async (req, res) => {
   try {
-    // const { email, password, name, phone, birthday, gender } = req.body;
-
-    // let dataUpdate = {};
-    // if (email) {
-    //   dataUpdate.email = email;
-    // }
-    // if (password) {
-    //   dataUpdate.password = await argon2.hash(password);
-    // }
-    // if (name) {
-    //   dataUpdate.name = name;
-    // }
-    // if (phone) {
-    //   dataUpdate.phone = phone;
-    // }
-    // if (birthday) {
-    //   dataUpdate.birthday = birthday;
-    // }
-    // if (gender) {
-    //   dataUpdate.gender = gender;
-    // }
-
     if (req.body.password) {
       req.body.password = await argon2.hash(req.body.password);
     }
@@ -54,6 +33,7 @@ const updateProfile = async (req, res) => {
   }
 };
 
+// get tất cả địa chỉ của user
 const getAddressesOfUser = async (req, res) => {
   try {
     const addresses = await Address.find({ user: req.user.id });
@@ -63,6 +43,7 @@ const getAddressesOfUser = async (req, res) => {
   }
 };
 
+// thêm 1 địa chỉ của user
 const addAddress = async (req, res) => {
   try {
     const { name, address, phone, isPaymentDefault, isShipDefault } = req.body;
@@ -90,6 +71,7 @@ const addAddress = async (req, res) => {
   }
 };
 
+// cập nhật địa chỉ của user
 const updateAddress = async (req, res) => {
   try {
     const { id } = req.params;
@@ -110,6 +92,7 @@ const updateAddress = async (req, res) => {
   }
 };
 
+// xóa địa chỉ của user
 const deleteAddress = async (req, res) => {
   const { id } = req.params;
 

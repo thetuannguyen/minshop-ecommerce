@@ -149,6 +149,7 @@ const uploadImgContent = async (req, res) => {
   }
 };
 
+// cập nhật blog
 const updateOne = async (req, res) => {
   try {
     const { id } = req.params;
@@ -176,6 +177,72 @@ const updateOne = async (req, res) => {
   }
 };
 
+// xóa danh mục blog
+const deleteBlogCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const blog = await Blog.findOne({ category: id });
+    if (blog)
+      return res.status(400).json({
+        blog: "Already blog in this category, cannot do this action",
+      });
+    const blogCategory = await BlogCategory.findByIdAndDelete(id);
+    if (!blogCategory) return res.status(400).json({ success: false });
+    res.json({ success: true });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+};
+
+// cập nhật danh mục blog
+const updateBlogCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+
+    const blogCategory = await BlogCategory.findByIdAndUpdate(
+      id,
+      { name },
+      { new: true }
+    );
+    if (!blogCategory) return res.status(400).json({ success: false });
+    res.json(blogCategory);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+};
+
+// xóa blog tag
+const deleteBlogTag = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const blogTag = await BlogTag.findByIdAndDelete(id);
+    if (!blogTag) return res.status(400).json({ success: false });
+    res.json({ success: true });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+};
+
+// cập nhật blog tag
+const updateBlogTag = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { tag } = req.body;
+
+    const blogTag = await BlogTag.findByIdAndUpdate(id, { tag }, { new: true });
+    if (!blogTag) return res.status(400).json({ success: false });
+    res.json(blogTag);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+};
+
 module.exports = {
   addCategory,
   getAllCategories,
@@ -187,4 +254,8 @@ module.exports = {
   deleteOne,
   uploadImgContent,
   updateOne,
+  deleteBlogCategory,
+  updateBlogCategory,
+  deleteBlogTag,
+  updateBlogTag,
 };

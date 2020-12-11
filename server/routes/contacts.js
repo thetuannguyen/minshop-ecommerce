@@ -1,3 +1,5 @@
+// định nghĩa contact route
+
 const router = require("express").Router();
 
 const { contactController } = require("../controllers");

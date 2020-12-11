@@ -1,5 +1,6 @@
 const Banner = require("../models/Banner");
 
+// thêm mới banner
 const addOne = async (req, res) => {
   try {
     if (!req.file)
@@ -16,6 +17,7 @@ const addOne = async (req, res) => {
   }
 };
 
+// get all banners
 const getAll = async (req, res) => {
   try {
     const banners = await Banner.find().sort({ createdAt: -1 });
@@ -26,6 +28,7 @@ const getAll = async (req, res) => {
   }
 };
 
+// xóa banner
 const deleteOne = async (req, res) => {
   try {
     const { id } = req.params;

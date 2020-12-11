@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { Button, Input, Table, Modal, Select } from "antd";
+import { Button, Input, Table, Modal, Select, Tabs } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import toastNotify from "../../utils/toastNotify";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
@@ -11,6 +11,7 @@ import _ from "lodash";
 
 function Blogs() {
   const { Option } = Select;
+  const { TabPane } = Tabs;
 
   const [currentTab, setCurrentTab] = useState("blogs");
 
@@ -38,8 +39,14 @@ function Blogs() {
   const fileRef = useRef();
 
   const [blogId, setBlogId] = useState("");
+  const [blogCategoryId, setBlogCategoryId] = useState("");
+  const [blogTagId, setBlogTagId] = useState("");
 
   const [pagination, setPagination] = useState({ current: 1, pageSize: 10 });
+
+  function handleChangeTab(key) {
+    setCurrentTab(key);
+  }
 
   useEffect(() => {
     axios
@@ -81,64 +88,138 @@ function Blogs() {
   }
 
   const handleAdd = () => {
-    if (!title) return toastNotify("warn", "Tiêu đề không được để trống");
-    else if (!categoryIdSelected)
-      return toastNotify("warn", "Danh mục không được để trống");
-    else if (!image) return toastNotify("warn", "Ảnh bìa không được để trống");
-    else if (!content)
-      return toastNotify("warn", "Nội dung không được để trống");
-    else {
-      let formData = new FormData();
+    if (currentTab === "blogs") {
+      if (!title) return toastNotify("warn", "Tiêu đề không được để trống");
+      else if (!categoryIdSelected)
+        return toastNotify("warn", "Danh mục không được để trống");
+      else if (!image)
+        return toastNotify("warn", "Ảnh bìa không được để trống");
+      else if (!content)
+        return toastNotify("warn", "Nội dung không được để trống");
+      else {
+        let formData = new FormData();
 
-      formData.append("title", title);
-      formData.append("category", categoryIdSelected);
-      formData.append("cover", image);
-      formData.append("content", content);
+        formData.append("title", title);
+        formData.append("category", categoryIdSelected);
+        formData.append("cover", image);
+        formData.append("content", content);
 
-      if (tagsSelected.length > 0)
-        formData.append("tags", JSON.stringify(tagsSelected));
+        if (tagsSelected.length > 0)
+          formData.append("tags", JSON.stringify(tagsSelected));
 
+        axios
+          .post("/api/blogs", formData)
+          .then((res) => {
+            toastNotify("success", "Thêm blog thành công");
+            resetState();
+            setIsVisible(false);
+            setBlogs([res.data, ...blogs]);
+          })
+          .catch((err) => toastNotify("error", "Đã có lỗi xảy ra"));
+      }
+    } else if (currentTab === "blog-categories") {
+      if (!categoryName)
+        return toastNotify("warn", "Tên danh mục không được để trống");
       axios
-        .post("/api/blogs", formData)
+        .post("/api/blogs/categories", { name: categoryName })
         .then((res) => {
-          resetState();
+          toastNotify("success", "Thêm danh mục blog thành công");
+          setCategoryName("");
           setIsVisible(false);
-          setBlogs([res.data, ...blogs]);
+          setBlogCategories([res.data, ...blogCategories]);
         })
-        .catch((err) => toastNotify("error", "Đã có lỗi xảy ra"));
+        .catch((err) => {
+          console.log(err);
+          toastNotify("error", "Đã có lỗi xảy ra");
+        });
+    } else if (currentTab === "blog-tags") {
+      if (!tagName)
+        return toastNotify("warn", "Tên blog tag không được để trống");
+      axios
+        .post("/api/blogs/tags", { tag: tagName })
+        .then((res) => {
+          toastNotify("success", "Thêm blog tag thành công");
+          setTagName("");
+          setIsVisible(false);
+          setBlogTags([res.data, ...blogTags]);
+        })
+        .catch((err) => {
+          console.log(err);
+          toastNotify("error", "Đã có lỗi xảy ra");
+        });
     }
   };
 
   const handleUpdate = () => {
-    if (!title) return toastNotify("warn", "Tiêu đề không được để trống");
-    else if (!categoryIdSelected)
-      return toastNotify("warn", "Danh mục không được để trống");
-    else if (!content)
-      return toastNotify("warn", "Nội dung không được để trống");
+    if (currentTab === "blogs") {
+      if (!title) return toastNotify("warn", "Tiêu đề không được để trống");
+      else if (!categoryIdSelected)
+        return toastNotify("warn", "Danh mục không được để trống");
+      else if (!content)
+        return toastNotify("warn", "Nội dung không được để trống");
 
-    let formData = new FormData();
+      let formData = new FormData();
 
-    formData.append("title", title);
-    formData.append("category", categoryIdSelected);
-    formData.append("content", content);
+      formData.append("title", title);
+      formData.append("category", categoryIdSelected);
+      formData.append("content", content);
 
-    if (tagsSelected.length > 0)
-      formData.append("tags", JSON.stringify(tagsSelected));
-    if (image) formData.append("cover", image);
+      if (tagsSelected.length > 0)
+        formData.append("tags", JSON.stringify(tagsSelected));
+      if (image) formData.append("cover", image);
 
-    axios.put(`/api/blogs/${blogId}`, formData).then((res) => {
-      setIsVisible(false);
-      // dispatch(updateBrand(res.data));
-      let _i = _.findIndex(blogs, { _id: res.data._id });
-      if (_i > -1)
-        setBlogs([
-          ...blogs.slice(0, _i),
-          res.data,
-          ...blogs.slice(_i + 1, blogs.length),
-        ]);
-      else setBlogs([res.data, ...blogs.slice(0, _i)]);
-      resetState();
-    });
+      axios.put(`/api/blogs/${blogId}`, formData).then((res) => {
+        setIsVisible(false);
+        // dispatch(updateBrand(res.data));
+        let _i = _.findIndex(blogs, { _id: res.data._id });
+        if (_i > -1)
+          setBlogs([
+            ...blogs.slice(0, _i),
+            res.data,
+            ...blogs.slice(_i + 1, blogs.length),
+          ]);
+        else setBlogs([res.data, ...blogs.slice(0, _i)]);
+        resetState();
+      });
+    } else if (currentTab === "blog-categories") {
+      if (!categoryName)
+        return toastNotify("warn", "Tên danh mục không được để trống");
+      axios
+        .put(`/api/blogs/categories/${blogCategoryId}`, { name: categoryName })
+        .then((res) => {
+          const idx = blogCategories.findIndex((e) => e._id === blogCategoryId);
+          setBlogCategories([
+            ...blogCategories.slice(0, idx),
+            res.data,
+            ...blogCategories.slice(idx + 1, blogCategories.length),
+          ]);
+          setCategoryName("");
+          setBlogTagId("");
+          setIsUpdate(false);
+          setIsVisible(false);
+          toastNotify("success", "Cập nhật danh mục blog thành công");
+        })
+        .catch((err) => toastNotify("error", "Đã có lỗi xảy ra"));
+    } else if (currentTab === "blog-tags") {
+      if (!tagName)
+        return toastNotify("warn", "Tên danh mục không được để trống");
+      axios
+        .put(`/api/blogs/tags/${blogTagId}`, { tag: tagName })
+        .then((res) => {
+          const idx = blogTags.findIndex((e) => e._id === blogTagId);
+          setBlogTags([
+            ...blogTags.slice(0, idx),
+            res.data,
+            ...blogTags.slice(idx + 1, blogTags.length),
+          ]);
+          setTagName("");
+          setBlogTagId("");
+          setIsUpdate(false);
+          setIsVisible(false);
+          toastNotify("success", "Cập nhật blog tag thành công");
+        })
+        .catch((err) => toastNotify("error", "Đã có lỗi xảy ra"));
+    }
   };
 
   const showDataUpdate = (blog) => {
@@ -221,6 +302,126 @@ function Blogs() {
     },
   ];
 
+  const deleteBlogCategory = (id) => {
+    axios
+      .delete(`/api/blogs/categories/${id}`)
+      .then((res) => {
+        toastNotify("success", "Xóa danh mục blog thành công");
+        setBlogCategories(blogCategories.filter((e) => e._id !== id));
+      })
+      .catch((err) => {
+        if (err.response) {
+          return toastNotify("error", Object.values(err.response.data)[0]);
+        }
+        toastNotify("error", "Đã có lỗi xảy ra");
+      });
+  };
+
+  const blogCategoryColumns = [
+    {
+      title: "STT",
+      width: 60,
+      dataIndex: "stt",
+      key: "stt",
+      fixed: "left",
+      render: (_, __, index) =>
+        index + 1 + (pagination.current - 1) * pagination.pageSize,
+    },
+    {
+      title: "Danh mục",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Hành động",
+      key: "actions",
+      fixed: "right",
+      width: 200,
+      render: (text, record) => (
+        <>
+          <Button
+            onClick={() => {
+              setCategoryName(record.name);
+              setBlogCategoryId(record._id);
+              setIsUpdate(true);
+              setIsVisible(true);
+            }}
+            type="primary"
+          >
+            Sửa
+          </Button>
+          <Button
+            type="primary"
+            danger
+            onClick={() => deleteBlogCategory(record._id)}
+          >
+            Xóa
+          </Button>
+        </>
+      ),
+    },
+  ];
+
+  const deleteBlogTag = (id) => {
+    axios
+      .delete(`/api/blogs/tags/${id}`)
+      .then((res) => {
+        toastNotify("success", "Xóa danh mục blog thành công");
+        setBlogTags(blogTags.filter((e) => e._id !== id));
+      })
+      .catch((err) => {
+        if (err.response) {
+          return toastNotify("error", Object.values(err.response.data)[0]);
+        }
+        toastNotify("error", "Đã có lỗi xảy ra");
+      });
+  };
+
+  const blogTagColumns = [
+    {
+      title: "STT",
+      width: 60,
+      dataIndex: "stt",
+      key: "stt",
+      fixed: "left",
+      render: (_, __, index) =>
+        index + 1 + (pagination.current - 1) * pagination.pageSize,
+    },
+    {
+      title: "Tag",
+      dataIndex: "tag",
+      key: "tag",
+    },
+    {
+      title: "Hành động",
+      key: "actions",
+      fixed: "right",
+      width: 200,
+      render: (text, record) => (
+        <>
+          <Button
+            onClick={() => {
+              setTagName(record.tag);
+              setBlogTagId(record._id);
+              setIsUpdate(true);
+              setIsVisible(true);
+            }}
+            type="primary"
+          >
+            Sửa
+          </Button>
+          <Button
+            type="primary"
+            danger
+            onClick={() => deleteBlogTag(record._id)}
+          >
+            Xóa
+          </Button>
+        </>
+      ),
+    },
+  ];
+
   // handle on add tag
   const handleOnAddTag = () => {
     if (tagName) {
@@ -251,26 +452,25 @@ function Blogs() {
         }}
       >
         <form className="w-full m-auto" style={{ fontSize: "14px" }}>
-          <div className="flex flex-wrap -mx-3 mb-6">
-            <div className="w-full px-3">
-              <label
-                className="block uppercase tracking-wide text-gray-700 text-md font-bold mb-2"
-                htmlFor="price"
-              >
-                Tiêu đề
-              </label>
-              <input
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                id="price"
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-            </div>
-          </div>
           {currentTab === "blogs" && (
             <>
-              {" "}
+              <div className="flex flex-wrap -mx-3 mb-6">
+                <div className="w-full px-3">
+                  <label
+                    className="block uppercase tracking-wide text-gray-700 text-md font-bold mb-2"
+                    htmlFor="price"
+                  >
+                    Tiêu đề
+                  </label>
+                  <input
+                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    id="price"
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                  />
+                </div>
+              </div>
               <div className="flex flex-wrap -mx-3 mb-6">
                 <div className="w-full px-3">
                   <label
@@ -396,6 +596,48 @@ function Blogs() {
               </div>
             </>
           )}
+          {currentTab === "blog-categories" && (
+            <>
+              <div className="flex flex-wrap -mx-3 mb-6">
+                <div className="w-full px-3">
+                  <label
+                    className="block uppercase tracking-wide text-gray-700 text-md font-bold mb-2"
+                    htmlFor="price"
+                  >
+                    Tên danh mục
+                  </label>
+                  <input
+                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    id="price"
+                    type="text"
+                    value={categoryName}
+                    onChange={(e) => setCategoryName(e.target.value)}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+          {currentTab === "blog-tags" && (
+            <>
+              <div className="flex flex-wrap -mx-3 mb-6">
+                <div className="w-full px-3">
+                  <label
+                    className="block uppercase tracking-wide text-gray-700 text-md font-bold mb-2"
+                    htmlFor="price"
+                  >
+                    Tên tag
+                  </label>
+                  <input
+                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    id="price"
+                    type="text"
+                    value={tagName}
+                    onChange={(e) => setTagName(e.target.value)}
+                  />
+                </div>
+              </div>
+            </>
+          )}
           <div className="md:flex md:items-center">
             <div className="md:w-1/3">
               <button
@@ -430,63 +672,42 @@ function Blogs() {
         </div> */}
       </div>
 
-      <Table
-        columns={blogColumns}
-        dataSource={blogs}
-        rowKey={(record) => record._id}
-        pagination={pagination}
-        onChange={(_pagination, filters, sorter) => setPagination(_pagination)}
-        scroll={{ x: "125%" }}
-      />
-      {/* <Tabs defaultActiveKey={currentTab} onChange={handleChangeTab}>
+      <Tabs defaultActiveKey={currentTab} onChange={handleChangeTab}>
         <TabPane tab="Blog" key="blogs">
-          
+          <Table
+            columns={blogColumns}
+            dataSource={blogs}
+            rowKey={(record) => record._id}
+            pagination={pagination}
+            onChange={(_pagination, filters, sorter) =>
+              setPagination(_pagination)
+            }
+            scroll={{ x: "125%" }}
+          />
         </TabPane>
-        <TabPane tab="Danh mục" key="blog-categories">
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingBottom: "8px",
-              borderBottom: "1px solid #999",
-            }}
-          >
-            <Button
-              type="primary"
-              size="large"
-              onClick={() => setIsVisible(true)}
-            >
-              Thêm
-            </Button>
-            <div style={{ display: "flex" }}>
-              <Input style={{ marginLeft: "4px" }} placeholder="Tìm kiếm" />
-            </div>
-          </div>
+        <TabPane tab="Danh mục blog" key="blog-categories">
+          <Table
+            columns={blogCategoryColumns}
+            dataSource={blogCategories}
+            rowKey={(record) => record._id}
+            pagination={pagination}
+            onChange={(_pagination, filters, sorter) =>
+              setPagination(_pagination)
+            }
+          />
         </TabPane>
-        <TabPane tab="Tags" key="blog-tags">
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingBottom: "8px",
-              borderBottom: "1px solid #999",
-            }}
-          >
-            <Button
-              type="primary"
-              size="large"
-              onClick={() => setIsVisible(true)}
-            >
-              Thêm
-            </Button>
-            <div style={{ display: "flex" }}>
-              <Input style={{ marginLeft: "4px" }} placeholder="Tìm kiếm" />
-            </div>
-          </div>
+        <TabPane tab="Blog tags" key="blog-tags">
+          <Table
+            columns={blogTagColumns}
+            dataSource={blogTags}
+            rowKey={(record) => record._id}
+            pagination={pagination}
+            onChange={(_pagination, filters, sorter) =>
+              setPagination(_pagination)
+            }
+          />
         </TabPane>
-      </Tabs> */}
+      </Tabs>
     </>
   );
 }

@@ -8,6 +8,7 @@ const { authValidation } = require("../validation");
 
 const User = require("../models/User");
 
+// đăng ký
 const register = async (req, res) => {
   try {
     const { isValid, errors } = authValidation.register(req.body);
@@ -52,6 +53,7 @@ const register = async (req, res) => {
   }
 };
 
+// xác thực người dùng
 const verifyUser = async (req, res) => {
   try {
     const { token } = req.params;
@@ -68,6 +70,7 @@ const verifyUser = async (req, res) => {
   }
 };
 
+// đăng nhập
 const login = async (req, res) => {
   try {
     const { isValid, errors } = authValidation.login(req.body);
@@ -129,6 +132,7 @@ const login = async (req, res) => {
   }
 };
 
+// quên mật khẩu
 const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -159,6 +163,7 @@ const forgotPassword = async (req, res) => {
   }
 };
 
+// thay đổi mật khẩu
 const changePassword = async (req, res) => {
   try {
     const { token } = req.params;
@@ -179,6 +184,7 @@ const changePassword = async (req, res) => {
   }
 };
 
+// đăng nhập bằng Google
 const googleLogin = async (req, res) => {
   try {
     const { email, name } = req.body;

@@ -1,5 +1,6 @@
 const Discount = require("../models/Discount");
 
+// thêm khuyến mãi
 const addOne = async (req, res) => {
   try {
     const {
@@ -56,6 +57,7 @@ const addOne = async (req, res) => {
   }
 };
 
+// lấy tất cả khuyến mãi khả dụng cho user
 const getAll = async (req, res) => {
   try {
     const discounts = await Discount.find({
@@ -72,6 +74,7 @@ const getAll = async (req, res) => {
   }
 };
 
+// lấy tất cả khuyến mãi
 const getAllByAdmin = async (req, res) => {
   try {
     const discounts = await Discount.find()
@@ -85,6 +88,7 @@ const getAllByAdmin = async (req, res) => {
   }
 };
 
+// xóa khuyễn mãi
 const deleteOne = async (req, res) => {
   const { id } = req.params;
 
@@ -93,6 +97,7 @@ const deleteOne = async (req, res) => {
   res.json({ success: true });
 };
 
+// cập nhật khuyến mãi
 const updateOne = async (req, res) => {
   try {
     const { id } = req.params;

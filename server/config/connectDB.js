@@ -1,3 +1,5 @@
+// kết nối CSDL MongoDB
+
 const mongoose = require("mongoose");
 
 module.exports = async () => {

@@ -1,3 +1,5 @@
+// định nghĩa brand route
+
 const router = require("express").Router();
 
 const { brandController } = require("../controllers");

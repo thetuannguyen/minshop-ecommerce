@@ -1,3 +1,5 @@
+// kiểm tra user đã đăng nhập?
+
 const passport = require("passport");
 
 const isAuth = (req, res, next) =>

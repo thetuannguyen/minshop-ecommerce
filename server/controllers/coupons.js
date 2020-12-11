@@ -2,6 +2,7 @@ const voucher_codes = require("voucher-code-generator");
 
 const Coupon = require("../models/Coupon");
 
+// tạo ra mã khuyến mãi
 function generateCoupon() {
   const possible =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -14,6 +15,7 @@ function generateCoupon() {
   });
 }
 
+// tạo mã khuyến mãi độc nhất
 const generateUniqueCoupon = () => {
   return new Promise(async (resolve, reject) => {
     let code = await generateCoupon();
@@ -24,6 +26,7 @@ const generateUniqueCoupon = () => {
   });
 };
 
+// thêm mã khuyến mãi
 const addOne = async (req, res) => {
   try {
     const {
@@ -88,6 +91,7 @@ const addOne = async (req, res) => {
   }
 };
 
+// cập nhật mã khuyến mãi
 const updateOne = async (req, res) => {
   try {
     const { id } = req.params;
@@ -155,6 +159,7 @@ const updateOne = async (req, res) => {
   }
 };
 
+// kiểm tra mã khuyến mãi có chính xác và còn hiệu lực?
 const checkValidCoupon = async (req, res) => {
   try {
     const { code } = req.body;
@@ -176,6 +181,7 @@ const checkValidCoupon = async (req, res) => {
   }
 };
 
+// lấy tất cả mã khuyến mãi
 const getAll = async (req, res) => {
   try {
     const coupons = await Coupon.find();
@@ -187,6 +193,7 @@ const getAll = async (req, res) => {
   }
 };
 
+// xóa mã khuyến mãi
 const deleteOne = async (req, res) => {
   const { id } = req.params;
 

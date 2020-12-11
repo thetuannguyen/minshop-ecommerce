@@ -1,3 +1,5 @@
+// định nghĩa coupon route
+
 const router = require("express").Router();
 
 const { couponController } = require("../controllers");

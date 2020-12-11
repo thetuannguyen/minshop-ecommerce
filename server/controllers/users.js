@@ -4,6 +4,7 @@ const { v4 } = require("uuid");
 const User = require("../models/User");
 const { sendMail } = require("../services/nodemailer");
 
+// get toàn bộ users
 const getMany = async (req, res) => {
   try {
     let { $limit, $skip, $sort } = req.query;
@@ -19,6 +20,7 @@ const getMany = async (req, res) => {
   }
 };
 
+// thêm mới 1 user
 const addOne = async (req, res) => {
   try {
     const { name, email, password, role, phone, address } = req.body;
@@ -46,6 +48,7 @@ const addOne = async (req, res) => {
   }
 };
 
+// xóa 1 user
 const deleteOne = async (req, res) => {
   const { id } = req.params;
 
@@ -54,6 +57,7 @@ const deleteOne = async (req, res) => {
   res.json({ success: true });
 };
 
+// quên mật khẩu
 const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -80,6 +84,7 @@ const forgotPassword = async (req, res) => {
   }
 };
 
+// thay đổi mật khẩu
 const changePassword = async (req, res) => {
   try {
     const { password } = req.body;

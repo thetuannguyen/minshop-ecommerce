@@ -1,3 +1,5 @@
+// định nghĩa comment route
+
 const router = require("express").Router();
 
 const { commentController } = require("../controllers");

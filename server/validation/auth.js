@@ -1,3 +1,5 @@
+// kiểm tra dữ liệu đầu vào của login và register
+
 const validator = require("validator");
 
 const { isEmpty } = require("../utils");

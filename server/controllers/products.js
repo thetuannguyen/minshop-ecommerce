@@ -139,6 +139,7 @@ const deleteOne = async (req, res) => {
   res.json({ success: true });
 };
 
+// cập nhật thông tin sản phẩm
 const updateOne = async (req, res) => {
   const { id } = req.params;
 
@@ -183,6 +184,7 @@ const updateOne = async (req, res) => {
   res.json(_product);
 };
 
+// get sản phẩm bằng productId
 const getById = async (req, res) => {
   try {
     const { id } = req.params;

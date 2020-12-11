@@ -66,6 +66,7 @@ const deleteOne = async (req, res) => {
   res.json({ success: true });
 };
 
+// cập nhật danh mục phụ
 const updateOne = async (req, res) => {
   try {
     const { id } = req.params;

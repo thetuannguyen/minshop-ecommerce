@@ -1,3 +1,5 @@
+// định nghĩa profile route
+
 const router = require("express").Router();
 
 const { profileController } = require("../controllers");

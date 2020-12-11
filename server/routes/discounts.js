@@ -1,3 +1,5 @@
+// định nghĩa discount route
+
 const router = require("express").Router();
 
 const { discountController } = require("../controllers");

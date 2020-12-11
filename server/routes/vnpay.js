@@ -1,3 +1,5 @@
+// định nghĩa vnpay route
+
 const router = require("express").Router();
 
 const { vnpayController } = require("../controllers");

@@ -1,5 +1,6 @@
 const CartHistory = require("../models/CartHistory");
 
+// thêm lịch sử đơn hàng
 const addCartHistory = async (req, res) => {
   try {
     const { id } = req.user;
@@ -21,6 +22,7 @@ const addCartHistory = async (req, res) => {
   }
 };
 
+// lấy lịch sử của đơn hàng
 const getCartHistoryByUser = async (req, res) => {
   try {
     const cart = await CartHistory.findOne({ user: req.user.id });

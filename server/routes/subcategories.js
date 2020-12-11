@@ -1,3 +1,5 @@
+// định nghĩa subcategories route
+
 const router = require("express").Router();
 
 const { subcategoryController } = require("../controllers");
