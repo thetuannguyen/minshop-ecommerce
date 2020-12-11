@@ -118,7 +118,7 @@ function Footer() {
             <div className="row">
               <p>
                 Copyright {new Date().getFullYear()}{" "}
-                <i className="fa fa-copyright" /> Designed by ...
+                <i className="fa fa-copyright" /> Designed by Tuan Nguyen
               </p>
             </div>
           </div>
