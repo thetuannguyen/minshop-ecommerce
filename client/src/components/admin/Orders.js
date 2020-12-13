@@ -357,11 +357,6 @@ function Orders({
                   setPagination(_pagination)
                 }
                 scroll={{ x: "100%" }}
-                onRow={(record) => ({
-                  onClick: () => {
-                    alert("1");
-                  },
-                })}
               />
             </TabPane>
             <TabPane tab="Đã đóng gói" key="orders-packed">
@@ -433,11 +428,6 @@ function Orders({
                   setPagination(_pagination)
                 }
                 scroll={{ x: "100%" }}
-                onRow={(record) => ({
-                  onClick: () => {
-                    alert("1");
-                  },
-                })}
                 dataSource={orders
                   .filter((order) => order.status === "cancel")
                   .filter(
