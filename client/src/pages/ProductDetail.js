@@ -172,7 +172,16 @@ function ProductDetail() {
                         <input
                           type="text"
                           value={amount}
-                          onChange={(e) => setAmount(e.target.value)}
+                          onChange={(e) => {
+                            console.log(e.target.value)
+                           
+                            if(/^[0-9]+$/gi.test(e.target.value) || !e.target.value)
+                              if(e.target.value < product.amount)
+                                setAmount(e.target.value)
+                              else toastNotify('warn', "So luong san pham khong du")
+                            else
+                              toastNotify('warn', "Ban khong duoc nhap so am")
+                          }}
                         />
                         <button
                           className="qty-increase"

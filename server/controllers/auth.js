@@ -16,6 +16,7 @@ const register = async (req, res) => {
       return res.status(400).json({ errors: errors });
     } else {
       const { name, email, password, phone } = req.body;
+      // check is user da ton tai chua
       const userByEmail = await User.findOne({ email });
 
       if (!userByEmail) {
@@ -38,6 +39,7 @@ const register = async (req, res) => {
           `<a href="http://${process.env.CLIENT_URI}/verify/${verifyToken}"> Click to verify account</a>`
         );
 
+        // luu user
         await newUser.save();
 
         res.json({ newUser });
