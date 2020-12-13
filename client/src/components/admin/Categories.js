@@ -1,23 +1,24 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { Button, Input, Modal, Table, Tabs } from "antd";
-import { DownloadOutlined } from "@ant-design/icons";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import { Button, Input, Modal, Table, Tabs } from "antd";
+import axios from "axios";
 import parseHTML from "html-react-parser";
-import toastNotify from "../../utils/toastNotify";
+import React, { useState } from "react";
 import {
   addCategory,
-  deleteCategory,
-  updateCategory,
   addSubcategory,
+  deleteCategory,
   deleteSubcategory,
+  updateCategory,
   updateSubcategory,
 } from "../../redux/actions/products";
+import toastNotify from "../../utils/toastNotify";
+
+const { confirm } = Modal;
+const { TabPane } = Tabs;
 
 function Categories({ categories, subcategories, dispatch }) {
-  const { TabPane } = Tabs;
-
   const [isVisible, setIsVisible] = useState(false);
   const [currentTab, setCurrentTab] = useState("categories");
 
@@ -44,43 +45,61 @@ function Categories({ categories, subcategories, dispatch }) {
     }
 
     if (currentTab == "categories") {
-      axios
-        .post("/api/categories", { name, description })
-        .then((res) => {
-          toastNotify("success", "Thêm danh mục thành công");
-          setIsVisible(false);
-          dispatch(addCategory(res.data));
-          resetState();
-        })
-        .catch((err) => {
-          const { errors } = err.response.data;
-          if (typeof errors !== "undefined" && errors.length > 0) {
-            return toastNotify("warn", errors[0].message);
-          } else {
-            return toastNotify("warn", "Đã có lỗi xảy ra. Hãy thử lại");
-          }
-        });
+      confirm({
+        title: "Bạn chắc chắn muốn thêm danh mục này?",
+        icon: <ExclamationCircleOutlined />,
+        onOk() {
+          axios
+            .post("/api/categories", { name, description })
+            .then((res) => {
+              toastNotify("success", "Thêm danh mục thành công");
+              setIsVisible(false);
+              dispatch(addCategory(res.data));
+              resetState();
+            })
+            .catch((err) => {
+              const { errors } = err.response.data;
+              if (typeof errors !== "undefined" && errors.length > 0) {
+                return toastNotify("warn", errors[0].message);
+              } else {
+                return toastNotify("warn", "Đã có lỗi xảy ra. Hãy thử lại");
+              }
+            });
+        },
+        onCancel() {
+          console.log("Cancel");
+        },
+      });
     } else {
-      axios
-        .post("/api/subcategories", {
-          name,
-          description,
-          categoryId: categoryIdSelected,
-        })
-        .then((res) => {
-          toastNotify("success", "Thêm danh mục thành công");
-          setIsVisible(false);
-          dispatch(addSubcategory(res.data));
-          resetState();
-        })
-        .catch((err) => {
-          const { errors } = err.response.data;
-          if (typeof errors !== "undefined" && errors.length > 0) {
-            return toastNotify("warn", errors[0].message);
-          } else {
-            return toastNotify("warn", "Đã có lỗi xảy ra. Hãy thử lại");
-          }
-        });
+      confirm({
+        title: "Bạn chắc chắn muốn thêm danh mục phụ này?",
+        icon: <ExclamationCircleOutlined />,
+        onOk() {
+          axios
+            .post("/api/subcategories", {
+              name,
+              description,
+              categoryId: categoryIdSelected,
+            })
+            .then((res) => {
+              toastNotify("success", "Thêm danh mục phụ thành công");
+              setIsVisible(false);
+              dispatch(addSubcategory(res.data));
+              resetState();
+            })
+            .catch((err) => {
+              const { errors } = err.response.data;
+              if (typeof errors !== "undefined" && errors.length > 0) {
+                return toastNotify("warn", errors[0].message);
+              } else {
+                return toastNotify("warn", "Đã có lỗi xảy ra. Hãy thử lại");
+              }
+            });
+        },
+        onCancel() {
+          console.log("Cancel");
+        },
+      });
     }
   };
 
@@ -93,73 +112,109 @@ function Categories({ categories, subcategories, dispatch }) {
     }
 
     if (currentTab == "categories") {
-      axios
-        .put(`/api/categories/${categoryId}`, { name, description })
-        .then((res) => {
-          toastNotify("success", "Cập nhật thành công");
-          setIsVisible(false);
-          dispatch(updateCategory(res.data));
-          resetState();
-        })
-        .catch((err) => {
-          const { errors } = err.response.data;
-          if (typeof errors !== "undefined" && errors.length > 0) {
-            return toastNotify("warn", errors[0].message);
-          } else {
-            return toastNotify("warn", "Đã có lỗi xảy ra. Hãy thử lại");
-          }
-        });
+      confirm({
+        title: "Bạn chắc chắn muốn cập nhật thông tin danh mục này?",
+        icon: <ExclamationCircleOutlined />,
+        onOk() {
+          axios
+            .put(`/api/categories/${categoryId}`, { name, description })
+            .then((res) => {
+              toastNotify("success", "Cập nhật thành công");
+              setIsVisible(false);
+              dispatch(updateCategory(res.data));
+              resetState();
+            })
+            .catch((err) => {
+              const { errors } = err.response.data;
+              if (typeof errors !== "undefined" && errors.length > 0) {
+                return toastNotify("warn", errors[0].message);
+              } else {
+                return toastNotify("warn", "Đã có lỗi xảy ra. Hãy thử lại");
+              }
+            });
+        },
+        onCancel() {
+          console.log("Cancel");
+        },
+      });
     } else {
-      axios
-        .put(`/api/subcategories/${categoryId}`, {
-          name,
-          description,
-          categoryId: categoryIdSelected,
-        })
-        .then((res) => {
-          toastNotify("success", "Cập nhật thành công");
-          setIsVisible(false);
-          dispatch(updateSubcategory(res.data));
-          resetState();
-        })
-        .catch((err) => {
-          const { errors } = err.response.data;
-          if (typeof errors !== "undefined" && errors.length > 0) {
-            return toastNotify("warn", errors[0].message);
-          } else {
-            return toastNotify("warn", "Đã có lỗi xảy ra. Hãy thử lại");
-          }
-        });
+      confirm({
+        title: "Bạn chắc chắn muốn cập nhật thông tin danh mục phụ này?",
+        icon: <ExclamationCircleOutlined />,
+        onOk() {
+          axios
+            .put(`/api/subcategories/${categoryId}`, {
+              name,
+              description,
+              categoryId: categoryIdSelected,
+            })
+            .then((res) => {
+              toastNotify("success", "Cập nhật thành công");
+              setIsVisible(false);
+              dispatch(updateSubcategory(res.data));
+              resetState();
+            })
+            .catch((err) => {
+              const { errors } = err.response.data;
+              if (typeof errors !== "undefined" && errors.length > 0) {
+                return toastNotify("warn", errors[0].message);
+              } else {
+                return toastNotify("warn", "Đã có lỗi xảy ra. Hãy thử lại");
+              }
+            });
+        },
+        onCancel() {
+          console.log("Cancel");
+        },
+      });
     }
   };
 
   const handleDelete = (id) => {
     if (currentTab == "categories") {
-      axios
-        .delete(`/api/categories/${id}`)
-        .then((res) => {
-          dispatch(deleteCategory(id));
-          toastNotify("success", "Xóa thành công");
-        })
-        .catch((err) => {
-          const { msg } = err.response.data;
-          if (msg) return toastNotify("warn", msg);
+      confirm({
+        title: "Bạn chắc chắn muốn xóa danh mục này?",
+        icon: <ExclamationCircleOutlined />,
+        onOk() {
+          axios
+            .delete(`/api/categories/${id}`)
+            .then((res) => {
+              dispatch(deleteCategory(id));
+              toastNotify("success", "Xóa thành công");
+            })
+            .catch((err) => {
+              const { msg } = err.response.data;
+              if (msg) return toastNotify("warn", msg);
 
-          toastNotify("warn", "Có lỗi xảy ra");
-        });
+              toastNotify("warn", "Có lỗi xảy ra");
+            });
+        },
+        onCancel() {
+          console.log("Cancel");
+        },
+      });
     } else {
-      axios
-        .delete(`/api/subcategories/${id}`)
-        .then((res) => {
-          dispatch(deleteSubcategory(id));
-          toastNotify("success", "Xóa thành công");
-        })
-        .catch((err) => {
-          const { msg } = err.response.data;
-          if (msg) return toastNotify("warn", msg);
+      confirm({
+        title: "Bạn chắc chắn muốn xóa danh mục phụ này?",
+        icon: <ExclamationCircleOutlined />,
+        onOk() {
+          axios
+            .delete(`/api/subcategories/${id}`)
+            .then((res) => {
+              dispatch(deleteSubcategory(id));
+              toastNotify("success", "Xóa thành công");
+            })
+            .catch((err) => {
+              const { msg } = err.response.data;
+              if (msg) return toastNotify("warn", msg);
 
-          toastNotify("warn", "Có lỗi xảy ra");
-        });
+              toastNotify("warn", "Có lỗi xảy ra");
+            });
+        },
+        onCancel() {
+          console.log("Cancel");
+        },
+      });
     }
   };
 
@@ -209,9 +264,9 @@ function Categories({ categories, subcategories, dispatch }) {
       title: "Hành động",
       key: "actions",
       fixed: "right",
-      width: 200,
+      width: 150,
       render: (text, record) => (
-        <>
+        <div className="flex justify-between">
           <Button onClick={() => showDataUpdate(record)} type="primary">
             Sửa
           </Button>
@@ -222,7 +277,7 @@ function Categories({ categories, subcategories, dispatch }) {
           >
             Xóa
           </Button>
-        </>
+        </div>
       ),
     },
   ];
@@ -260,9 +315,9 @@ function Categories({ categories, subcategories, dispatch }) {
       title: "Hành động",
       key: "actions",
       fixed: "right",
-      width: 200,
+      width: 150,
       render: (text, record) => (
-        <>
+        <div className="flex justify-between">
           <Button onClick={() => showDataUpdate(record)} type="primary">
             Sửa
           </Button>
@@ -273,7 +328,7 @@ function Categories({ categories, subcategories, dispatch }) {
           >
             Xóa
           </Button>
-        </>
+        </div>
       ),
     },
   ];

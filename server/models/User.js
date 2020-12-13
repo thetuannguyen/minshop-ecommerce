@@ -44,6 +44,10 @@ const userSchema = mongoose.Schema({
     enum: ["ROLE_ADMIN", "ROLE_USER"],
     default: "ROLE_USER",
   },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
   isVerify: {
     type: Boolean,
     default: false,

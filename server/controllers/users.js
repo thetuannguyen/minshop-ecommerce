@@ -99,10 +99,62 @@ const changePassword = async (req, res) => {
   }
 };
 
+// deactivate user (only for ROLE_USER)
+const deactivateUser = async (req, res) => {
+  try {
+    const { id } = req.body;
+    if (!id) return res.status(400).json({ user: "id is required" });
+
+    const user = await User.findOneAndUpdate(
+      { _id: id, isActive: true, role: "ROLE_USER" },
+      {
+        isActive: false,
+      },
+      { new: true }
+    );
+    if (!user)
+      return res
+        .status(400)
+        .json({ user: "Bạn không thể thực hiện được hành động này" });
+
+    res.json(user);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+};
+
+// deactivate user (only for ROLE_USER)
+const activateUser = async (req, res) => {
+  try {
+    const { id } = req.body;
+    if (!id) return res.status(400).json({ user: "id is required" });
+
+    const user = await User.findOneAndUpdate(
+      { _id: id, isActive: false, role: "ROLE_USER" },
+      {
+        isActive: true,
+      },
+      { new: true }
+    );
+    if (!user)
+      return res
+        .status(400)
+        .json({ user: "Bạn không thể thực hiện được hành động này" });
+
+    res.json(user);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+};
+
 module.exports = {
   getMany,
   addOne,
   deleteOne,
   changePassword,
   forgotPassword,
+  deactivateUser,
+  activateUser,
 };

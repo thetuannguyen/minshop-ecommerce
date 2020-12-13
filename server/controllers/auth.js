@@ -95,6 +95,17 @@ const login = async (req, res) => {
           });
         }
 
+        if (!userByEmail.isActive) {
+          return res.status(400).json({
+            errors: [
+              {
+                field: "active",
+                message: "Tài khoản đã bị khóa",
+              },
+            ],
+          });
+        }
+
         const matchPassword = await argon2.verify(
           userByEmail.password,
           password

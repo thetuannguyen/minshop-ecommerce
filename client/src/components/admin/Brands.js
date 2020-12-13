@@ -1,4 +1,4 @@
-import { DownloadOutlined } from "@ant-design/icons";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import { Button, Input, Modal, Table } from "antd";
@@ -11,6 +11,8 @@ import {
   updateBrand,
 } from "../../redux/actions/products";
 import toastNotify from "../../utils/toastNotify";
+
+const { confirm } = Modal;
 
 function Brands({ brands, dispatch }) {
   const [isVisible, setIsVisible] = useState(false);
@@ -45,22 +47,31 @@ function Brands({ brands, dispatch }) {
     formData.append("description", description);
     formData.append("image", image);
 
-    axios
-      .post("/api/brands", formData)
-      .then((res) => {
-        toastNotify("success", "Thêm thương hiệu thành công");
-        setIsVisible(false);
-        dispatch(addBrand(res.data));
-        resetState();
-      })
-      .catch((err) => {
-        const { errors } = err.response.data;
-        if (typeof errors !== "undefined" && errors.length > 0) {
-          return toastNotify("warn", errors[0].message);
-        } else {
-          return toastNotify("warn", "Đã có lỗi xảy ra");
-        }
-      });
+    confirm({
+      title: "Bạn chắc chắn muốn thêm thương hiệu này này?",
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        axios
+          .post("/api/brands", formData)
+          .then((res) => {
+            toastNotify("success", "Thêm thương hiệu thành công");
+            setIsVisible(false);
+            dispatch(addBrand(res.data));
+            resetState();
+          })
+          .catch((err) => {
+            const { errors } = err.response.data;
+            if (typeof errors !== "undefined" && errors.length > 0) {
+              return toastNotify("warn", errors[0].message);
+            } else {
+              return toastNotify("warn", "Đã có lỗi xảy ra");
+            }
+          });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
   };
 
   const handleUpdate = () => {
@@ -76,32 +87,82 @@ function Brands({ brands, dispatch }) {
 
     if (image) {
       formData.append("image", image);
-      axios.put(`/api/brands/${brandId}`, formData).then((res) => {
-        setIsVisible(false);
-        dispatch(updateBrand(res.data));
-        resetState();
+      confirm({
+        title: "Bạn chắc chắn muốn cập nhật thông tin thương hiệu này này?",
+        icon: <ExclamationCircleOutlined />,
+        onOk() {
+          axios
+            .put(`/api/brands/${brandId}`, formData)
+            .then((res) => {
+              setIsVisible(false);
+              dispatch(updateBrand(res.data));
+              resetState();
+              toastNotify("success", "Cập nhật thương hiệu thành công");
+            })
+            .catch((err) => {
+              const { errors } = err.response.data;
+              if (typeof errors !== "undefined" && errors.length > 0) {
+                return toastNotify("warn", errors[0].message);
+              } else {
+                return toastNotify("warn", "Đã có lỗi xảy ra");
+              }
+            });
+        },
+        onCancel() {
+          console.log("Cancel");
+        },
       });
     } else {
-      axios.put(`/api/brands/${brandId}`, { name, description }).then((res) => {
-        setIsVisible(false);
-        dispatch(updateBrand(res.data));
-        resetState();
+      confirm({
+        title: "Bạn chắc chắn muốn cập nhật thông tin thương hiệu này này?",
+        icon: <ExclamationCircleOutlined />,
+        onOk() {
+          axios
+            .put(`/api/brands/${brandId}`, { name, description })
+            .then((res) => {
+              setIsVisible(false);
+              dispatch(updateBrand(res.data));
+              resetState();
+              toastNotify("success", "Cập nhật thương hiệu thành công");
+            })
+            .catch((err) => {
+              const { errors } = err.response.data;
+              if (typeof errors !== "undefined" && errors.length > 0) {
+                return toastNotify("warn", errors[0].message);
+              } else {
+                return toastNotify("warn", "Đã có lỗi xảy ra");
+              }
+            });
+        },
+        onCancel() {
+          console.log("Cancel");
+        },
       });
     }
   };
 
   const handleDelete = (id) => {
-    axios
-      .delete(`/api/brands/${id}`)
-      .then((res) => {
-        dispatch(deleteBrand(id));
-      })
-      .catch((err) => {
-        const { msg } = err.response.data;
-        if (msg) return toastNotify("warn", msg);
+    confirm({
+      title: "Bạn chắc chắn muốn xóa thương hiệu này này?",
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        axios
+          .delete(`/api/brands/${id}`)
+          .then((res) => {
+            dispatch(deleteBrand(id));
+            toastNotify("success", "Xóa thương hiệu thành công");
+          })
+          .catch((err) => {
+            const { msg } = err.response.data;
+            if (msg) return toastNotify("warn", msg);
 
-        toastNotify("warn", "Có lỗi xảy ra");
-      });
+            toastNotify("warn", "Đã có lỗi xảy ra");
+          });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
   };
 
   const showDataUpdate = (brand) => {
@@ -154,9 +215,9 @@ function Brands({ brands, dispatch }) {
       title: "Hành động",
       key: "actions",
       fixed: "right",
-      width: 200,
+      width: 150,
       render: (text, record) => (
-        <>
+        <div className="flex justify-between">
           <Button onClick={() => showDataUpdate(record)} type="primary">
             Sửa
           </Button>
@@ -167,7 +228,7 @@ function Brands({ brands, dispatch }) {
           >
             Xóa
           </Button>
-        </>
+        </div>
       ),
     },
   ];

@@ -1,3 +1,4 @@
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Button, Select, Radio, Steps, Modal } from "antd";
 import axios from "axios";
 import React, { useState, useEffect, useRef } from "react";
@@ -8,6 +9,8 @@ import formatPrice from "../../utils/formatPrice";
 import toastNotify from "../../utils/toastNotify";
 
 const { Step } = Steps;
+const { confirm } = Modal;
+const { Option } = Select;
 
 function OrderDetail({
   products,
@@ -16,8 +19,6 @@ function OrderDetail({
   updateOrders,
   handleDeleteOrder,
 }) {
-  const { Option } = Select;
-
   // print order
   const printRef = useRef();
   const [isShow, setIsShow] = useState(false);
@@ -130,26 +131,43 @@ function OrderDetail({
     if (!name) return toastNotify("warn", "Họ tên không được để trống");
     if (!phone) return toastNotify("warn", "Điện thoại không được để trống");
     if (!address) return toastNotify("warn", "Địa chỉ không được để trống");
-    if (_productsSelected.length === 0) return;
+    if (_productsSelected.length === 0)
+      return toastNotify("warn", "Chọn sản phẩm cho đơn hàng");
     // if (shipType) return toastNotify("warn", "Hãy chọn hình thức vận chuyển");
-    axios
-      .put(`/api/orders/${orderSelected._id}`, {
-        products: _productsSelected,
-        name,
-        phone,
-        address,
-        note,
-        isPaid,
-        status,
-        shipType,
-        total: getTotalPrice() + (shipType === "fast" ? 40000 : 0),
-      })
-      .then((res) => {
-        setHistories([res.data.history, ...histories]);
-        updateOrders(res.data.order);
-        toastNotify("success", "Cập nhật thành công");
-        setOrderSelected("");
-      });
+
+    confirm({
+      title: "Bạn chắc chắn muốn cập nhật thông tin đơn hàng này này?",
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        axios
+          .put(`/api/orders/${orderSelected._id}`, {
+            products: _productsSelected,
+            name,
+            phone,
+            address,
+            note,
+            isPaid,
+            status,
+            shipType,
+            total: getTotalPrice() + (shipType === "fast" ? 40000 : 0),
+          })
+          .then((res) => {
+            setHistories([res.data.history, ...histories]);
+            updateOrders(res.data.order);
+            toastNotify("success", "Cập nhật thành công");
+            setOrderSelected("");
+          })
+          .catch((err) => {
+            if (err.response && err.response.data) {
+              return toastNotify("warn", Object.values(err.response.data)[0]);
+            }
+            toastNotify("error", "Đã có lỗi xảy ra. Vui lòng thử lại");
+          });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
   }
 
   function deleteOrder() {
@@ -325,17 +343,60 @@ function OrderDetail({
             <div className="mt-6 mb-4">Tình trạng thanh toán</div>
             <Radio.Group onChange={() => setIsPaid(!isPaid)} value={isPaid}>
               <Radio value={true}>Đã thanh toán</Radio>
-              <Radio value={false}>Chưa thanh toán</Radio>
+              <Radio
+                disabled={currentOrder.isPaid ? true : false}
+                value={false}
+              >
+                Chưa thanh toán
+              </Radio>
             </Radio.Group>
             <div className="mt-6 mb-4">Tình trạng đơn hàng</div>
             <Radio.Group
               onChange={(e) => setStatus(e.target.value)}
               value={status}
             >
-              <Radio value="pending">Đang xử lý</Radio>
-              <Radio value="packed">Đã đóng gói</Radio>
-              <Radio value="delivered">Đã chuyển hàng</Radio>
-              <Radio value="success">Đã hoàn thành</Radio>
+              <Radio
+                disabled={currentOrder.status !== "pending" ? true : false}
+                value="pending"
+              >
+                Đang xử lý
+              </Radio>
+              <Radio
+                disabled={
+                  currentOrder.status !== "pending" &&
+                  currentOrder.status !== "packed"
+                    ? true
+                    : false
+                }
+                value="packed"
+              >
+                Đã đóng gói
+              </Radio>
+              <Radio
+                disabled={
+                  currentOrder.status !== "pending" &&
+                  currentOrder.status !== "packed" &&
+                  currentOrder.status !== "delivered"
+                    ? true
+                    : false
+                }
+                value="delivered"
+              >
+                Đã chuyển hàng
+              </Radio>
+              <Radio
+                disabled={
+                  currentOrder.status !== "pending" &&
+                  currentOrder.status !== "packed" &&
+                  currentOrder.status !== "delivered" &&
+                  currentOrder.status !== "success"
+                    ? true
+                    : false
+                }
+                value="success"
+              >
+                Đã hoàn thành
+              </Radio>
               <Radio value="cancel">Đã hủy</Radio>
             </Radio.Group>
             <div className="my-4 text-right">

@@ -5,6 +5,9 @@ import { Button, Input, Table, Modal, Radio, DatePicker } from "antd";
 import toastNotify from "../../utils/toastNotify";
 import moment from "moment";
 import { formatDate } from "../../utils/formatDate";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+
+const { confirm } = Modal;
 
 function Discounts({ brands, categories, subcategories }) {
   const [discounts, setDiscounts] = useState([]);
@@ -33,8 +36,18 @@ function Discounts({ brands, categories, subcategories }) {
   }, []);
 
   const handleDelete = (id) => {
-    axios.delete(`/api/discounts/${id}`).then((res) => {
-      setDiscounts(discounts.filter((e) => e._id != id));
+    confirm({
+      title: "Bạn chắc chắn muốn xóa khuyến mãi này?",
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        axios.delete(`/api/discounts/${id}`).then((res) => {
+          setDiscounts(discounts.filter((e) => e._id != id));
+          toastNotify("success", "xóa thành công");
+        });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
     });
   };
 
@@ -61,11 +74,21 @@ function Discounts({ brands, categories, subcategories }) {
           if (endAt) data.endAt = endAt;
           if (discountType === "rate") data.discountRate = discount;
           else if (discountType === "price") data.discountPrice = discount;
-          axios.post("/api/discounts", data).then((res) => {
-            resetState();
-            setDiscounts([...discounts, res.data]);
-            toastNotify("success", "Thêm thành công");
-            setIsVisible(false);
+
+          confirm({
+            title: "Bạn chắc chắn muốn thêm khuyến mãi này?",
+            icon: <ExclamationCircleOutlined />,
+            onOk() {
+              axios.post("/api/discounts", data).then((res) => {
+                resetState();
+                setDiscounts([...discounts, res.data]);
+                toastNotify("success", "Thêm thành công");
+                setIsVisible(false);
+              });
+            },
+            onCancel() {
+              console.log("Cancel");
+            },
           });
         }
       } else {
@@ -80,11 +103,21 @@ function Discounts({ brands, categories, subcategories }) {
             if (endAt) data.endAt = endAt;
             if (discountType === "rate") data.discountRate = discount;
             else if (discountType === "price") data.discountPrice = discount;
-            axios.post("/api/discounts", data).then((res) => {
-              resetState();
-              setDiscounts([...discounts, res.data]);
-              toastNotify("success", "Thêm thành công");
-              setIsVisible(false);
+
+            confirm({
+              title: "Bạn chắc chắn muốn thêm khuyến mãi này?",
+              icon: <ExclamationCircleOutlined />,
+              onOk() {
+                axios.post("/api/discounts", data).then((res) => {
+                  resetState();
+                  setDiscounts([...discounts, res.data]);
+                  toastNotify("success", "Thêm thành công");
+                  setIsVisible(false);
+                });
+              },
+              onCancel() {
+                console.log("Cancel");
+              },
             });
           }
         }
@@ -126,18 +159,28 @@ function Discounts({ brands, categories, subcategories }) {
           if (endAt) data.endAt = endAt;
           if (discountType === "rate") data.discountRate = discount;
           else if (discountType === "price") data.discountPrice = discount;
-          axios.put(`/api/discounts/${discountId}`, data).then((res) => {
-            let idx = discounts.findIndex((e) => e._id === discountId);
-            if (idx >= 0) {
-              resetState();
-              setDiscounts([
-                ...discounts.slice(0, idx),
-                res.data,
-                ...discounts.slice(idx + 1, discounts.length),
-              ]);
-              toastNotify("success", "Cập nhật thành công");
-              setIsVisible(false);
-            }
+
+          confirm({
+            title: "Bạn chắc chắn muốn cập nhật thông tin khuyến mãi này?",
+            icon: <ExclamationCircleOutlined />,
+            onOk() {
+              axios.put(`/api/discounts/${discountId}`, data).then((res) => {
+                let idx = discounts.findIndex((e) => e._id === discountId);
+                if (idx >= 0) {
+                  resetState();
+                  setDiscounts([
+                    ...discounts.slice(0, idx),
+                    res.data,
+                    ...discounts.slice(idx + 1, discounts.length),
+                  ]);
+                  toastNotify("success", "Cập nhật thành công");
+                  setIsVisible(false);
+                }
+              });
+            },
+            onCancel() {
+              console.log("Cancel");
+            },
           });
         }
       } else {
@@ -152,18 +195,28 @@ function Discounts({ brands, categories, subcategories }) {
             if (endAt) data.endAt = endAt;
             if (discountType === "rate") data.discountRate = discount;
             else if (discountType === "price") data.discountPrice = discount;
-            axios.put(`/api/discounts/${discountId}`, data).then((res) => {
-              let idx = discounts.findIndex((e) => e._id === discountId);
-              if (idx >= 0) {
-                resetState();
-                setDiscounts([
-                  ...discounts.slice(0, idx),
-                  res.data,
-                  ...discounts.slice(idx + 1, discounts.length),
-                ]);
-                toastNotify("success", "Cập nhật thành công");
-                setIsVisible(false);
-              }
+
+            confirm({
+              title: "Bạn chắc chắn muốn cập nhật thông tin khuyến mãi này?",
+              icon: <ExclamationCircleOutlined />,
+              onOk() {
+                axios.put(`/api/discounts/${discountId}`, data).then((res) => {
+                  let idx = discounts.findIndex((e) => e._id === discountId);
+                  if (idx >= 0) {
+                    resetState();
+                    setDiscounts([
+                      ...discounts.slice(0, idx),
+                      res.data,
+                      ...discounts.slice(idx + 1, discounts.length),
+                    ]);
+                    toastNotify("success", "Cập nhật thành công");
+                    setIsVisible(false);
+                  }
+                });
+              },
+              onCancel() {
+                console.log("Cancel");
+              },
             });
           }
         }
@@ -246,9 +299,9 @@ function Discounts({ brands, categories, subcategories }) {
       title: "Hành động",
       key: "actions",
       fixed: "right",
-      width: 200,
+      width: 150,
       render: (text, record) => (
-        <>
+        <div className="flex justify-between">
           <Button onClick={() => showDataUpdate(record)} type="primary">
             Sửa
           </Button>
@@ -259,7 +312,7 @@ function Discounts({ brands, categories, subcategories }) {
           >
             Xóa
           </Button>
-        </>
+        </div>
       ),
     },
   ];

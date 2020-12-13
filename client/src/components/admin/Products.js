@@ -1,20 +1,22 @@
-import { DownloadOutlined } from "@ant-design/icons";
+import { DownloadOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import { Button, Input, Modal, Table } from "antd";
 import axios from "axios";
+import * as FileSaver from "file-saver";
 import parseHTML from "html-react-parser";
 import React, { useRef, useState } from "react";
-import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import {
   addProduct,
   deleteProduct,
   updateProduct,
 } from "../../redux/actions/products";
-import toastNotify from "../../utils/toastNotify";
 import { formatDate } from "../../utils/formatDate";
 import formatPrice from "../../utils/formatPrice";
+import toastNotify from "../../utils/toastNotify";
+
+const { confirm } = Modal;
 
 function Products({ products, brands, categories, subcategories, dispatch }) {
   const [isVisible, setIsVisible] = useState(false);
@@ -77,18 +79,26 @@ function Products({ products, brands, categories, subcategories, dispatch }) {
       formData.append("image", file);
     }
 
-    axios.post("/api/products", formData).then((res) => {
-      setIsVisible(false);
-      dispatch(addProduct(res.data));
-      toastNotify("success", "Thêm sản phẩm thành công");
-      resetState();
+    confirm({
+      title: "Bạn chắc chắn muốn thêm sản phẩm này?",
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        axios
+          .post("/api/products", formData)
+          .then((res) => {
+            setIsVisible(false);
+            dispatch(addProduct(res.data));
+            toastNotify("success", "Thêm sản phẩm thành công");
+            resetState();
+          })
+          .catch((err) => {
+            toastNotify("error", "Đã có lỗi xảy ra. Vui lòng thử lại");
+          });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
     });
-    // .catch((err) => {
-    //   dispatch({
-    //     type: GET_ERRORS,
-    //     payload: err.response.data,
-    //   });
-    // });
   };
 
   const handleUpdate = () => {
@@ -129,17 +139,46 @@ function Products({ products, brands, categories, subcategories, dispatch }) {
         formData.append("image", file);
       }
 
-    axios.put(`/api/products/${productId}`, formData).then((res) => {
-      setIsVisible(false);
-      dispatch(updateProduct(res.data));
-      toastNotify("success", "Cập nhật sản phẩm thành công");
-      resetState();
+    confirm({
+      title: "Bạn chắc chắn muốn cập nhật thông tin sản phẩm này?",
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        axios
+          .put(`/api/products/${productId}`, formData)
+          .then((res) => {
+            setIsVisible(false);
+            dispatch(updateProduct(res.data));
+            toastNotify("success", "Cập nhật sản phẩm thành công");
+            resetState();
+          })
+          .catch((err) => {
+            toastNotify("error", "Đã có lỗi xảy ra. Vui lòng thử lại");
+          });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
     });
   };
 
   const handleDelete = (id) => {
-    axios.delete(`/api/products/${id}`).then((res) => {
-      dispatch(deleteProduct(id));
+    confirm({
+      title: "Bạn chắc chắn muốn xóa sản phẩm này?",
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        axios
+          .delete(`/api/products/${id}`)
+          .then((res) => {
+            dispatch(deleteProduct(id));
+            toastNotify("success", "Đã xóa sản phẩm thành công");
+          })
+          .catch((err) => {
+            toastNotify("error", "Đã có lỗi xảy ra. Vui lòng thử lại");
+          });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
     });
   };
 
@@ -234,7 +273,7 @@ function Products({ products, brands, categories, subcategories, dispatch }) {
       title: "Hành động",
       key: "actions",
       fixed: "right",
-      width: 200,
+      width: 150,
       render: (text, record) => (
         <div className="flex justify-between">
           <Button onClick={() => showDataUpdate(record)} type="primary">

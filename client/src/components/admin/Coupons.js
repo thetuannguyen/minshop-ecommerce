@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import formatPrice from "../../utils/formatPrice";
-import { Button, Input, Table, Modal, Radio, DatePicker } from "antd";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import { Button, DatePicker, Input, Modal, Radio, Table } from "antd";
+import axios from "axios";
 import parseHTML from "html-react-parser";
-import toastNotify from "../../utils/toastNotify";
 import moment from "moment";
+import React, { useEffect, useState } from "react";
 import { formatDate } from "../../utils/formatDate";
+import formatPrice from "../../utils/formatPrice";
+import toastNotify from "../../utils/toastNotify";
+
+const { confirm } = Modal;
 
 function Coupons() {
   const [coupons, setCoupons] = useState([]);
@@ -39,8 +42,23 @@ function Coupons() {
   }, []);
 
   const handleDelete = (id) => {
-    axios.delete(`/api/coupons/${id}`).then((res) => {
-      setCoupons(coupons.filter((e) => e._id != id));
+    confirm({
+      title: "Bạn chắc chắn muốn xóa mã giảm giá này?",
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        axios
+          .delete(`/api/coupons/${id}`)
+          .then((res) => {
+            setCoupons(coupons.filter((e) => e._id != id));
+            toastNotify("success", "Xóa thành công");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
     });
   };
 
@@ -79,18 +97,28 @@ function Coupons() {
       if (discountType === "rate") data.discountRate = discount;
       else if (discountType === "price") data.discountPrice = discount;
 
-      axios
-        .post("/api/coupons", data)
-        .then((res) => {
-          resetState();
-          setIsVisible(false);
-          setCoupons([...coupons, res.data]);
-        })
-        .catch((err) => {
-          if (err.response.data.code)
-            return toastNotify("error", "Đã tồn tại mã code");
-          toastNotify("error", "Đã có lỗi xảy ra");
-        });
+      confirm({
+        title: "Bạn chắc chắn muốn thêm mã giảm giá này?",
+        icon: <ExclamationCircleOutlined />,
+        onOk() {
+          axios
+            .post("/api/coupons", data)
+            .then((res) => {
+              resetState();
+              setIsVisible(false);
+              setCoupons([...coupons, res.data]);
+              toastNotify("success", "Thêm thành công");
+            })
+            .catch((err) => {
+              if (err.response.data.code)
+                return toastNotify("error", "Đã tồn tại mã code");
+              toastNotify("error", "Đã có lỗi xảy ra");
+            });
+        },
+        onCancel() {
+          console.log("Cancel");
+        },
+      });
     }
   };
 
@@ -135,26 +163,35 @@ function Coupons() {
       if (discountType === "rate") data.discountRate = discount;
       else if (discountType === "price") data.discountPrice = discount;
 
-      axios
-        .put(`/api/coupons/${couponId}`, data)
-        .then((res) => {
-          let idx = coupons.findIndex((e) => e._id === couponId);
-          if (idx >= 0) {
-            resetState();
-            setCoupons([
-              ...coupons.slice(0, idx),
-              res.data,
-              ...coupons.slice(idx + 1, coupons.length),
-            ]);
-            toastNotify("success", "Cập nhật thành công");
-            setIsVisible(false);
-          }
-        })
-        .catch((err) => {
-          if (err.response.data.code)
-            return toastNotify("error", "Đã tồn tại mã code");
-          toastNotify("error", "Đã có lỗi xảy ra");
-        });
+      confirm({
+        title: "Bạn chắc chắn muốn thêm mã giảm giá này?",
+        icon: <ExclamationCircleOutlined />,
+        onOk() {
+          axios
+            .put(`/api/coupons/${couponId}`, data)
+            .then((res) => {
+              let idx = coupons.findIndex((e) => e._id === couponId);
+              if (idx >= 0) {
+                resetState();
+                setCoupons([
+                  ...coupons.slice(0, idx),
+                  res.data,
+                  ...coupons.slice(idx + 1, coupons.length),
+                ]);
+                toastNotify("success", "Cập nhật thành công");
+                setIsVisible(false);
+              }
+            })
+            .catch((err) => {
+              if (err.response.data.code)
+                return toastNotify("error", "Đã tồn tại mã code");
+              toastNotify("error", "Đã có lỗi xảy ra");
+            });
+        },
+        onCancel() {
+          console.log("Cancel");
+        },
+      });
     }
   };
 
@@ -213,9 +250,9 @@ function Coupons() {
       title: "Hành động",
       key: "actions",
       fixed: "right",
-      width: 200,
+      width: 150,
       render: (text, record) => (
-        <>
+        <div className="flex justify-between">
           <Button onClick={() => showDataUpdate(record)} type="primary">
             Sửa
           </Button>
@@ -226,7 +263,7 @@ function Coupons() {
           >
             Xóa
           </Button>
-        </>
+        </div>
       ),
     },
   ];

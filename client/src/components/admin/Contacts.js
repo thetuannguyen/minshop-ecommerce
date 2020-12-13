@@ -1,15 +1,33 @@
-import React from "react";
+import { DownloadOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import { Button, Modal, Table } from "antd";
 import axios from "axios";
-import { formatDate } from "../../utils/formatDate";
-import { Button, Input, Table } from "antd";
-import { DownloadOutlined } from "@ant-design/icons";
 import * as FileSaver from "file-saver";
+import React from "react";
 import * as XLSX from "xlsx";
+import { formatDate } from "../../utils/formatDate";
+import toastNotify from "../../utils/toastNotify";
+
+const { confirm } = Modal;
 
 function Contacts({ contacts, deleteContact }) {
   const handleDelete = (id) => {
-    axios.delete(`/api/contacts/${id}`).then((res) => {
-      deleteContact(id);
+    confirm({
+      title: "Bạn chắc chắn muốn xóa liên hệ này?",
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        axios
+          .delete(`/api/contacts/${id}`)
+          .then((res) => {
+            deleteContact(id);
+            toastNotify("success", "Đã xóa liên hệ thành công");
+          })
+          .catch((err) => {
+            toastNotify("error", "Đã có lỗi xảy ra. Vui lòng thử lại");
+          });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
     });
   };
 

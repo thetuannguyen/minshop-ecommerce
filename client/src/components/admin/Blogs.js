@@ -1,13 +1,14 @@
-import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
-import { Button, Input, Table, Modal, Select, Tabs } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
-import toastNotify from "../../utils/toastNotify";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import { Button, Modal, Select, Table, Tabs } from "antd";
+import axios from "axios";
 import parseHTML from "html-react-parser";
 import _ from "lodash";
-// import * as ckfinder from "@ckeditor/ckeditor5-ckfinder/src/ckfinder";
+import React, { useEffect, useRef, useState } from "react";
+import toastNotify from "../../utils/toastNotify";
+
+const { confirm } = Modal;
 
 function Blogs() {
   const { Option } = Select;
@@ -70,8 +71,23 @@ function Blogs() {
   }, []);
 
   const handleDelete = (id) => {
-    axios.delete(`/api/blogs/${id}`).then((res) => {
-      setBlogs(blogs.filter((e) => e._id != id));
+    confirm({
+      title: "Bạn chắc chắn muốn xóa blog này?",
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        axios
+          .delete(`/api/blogs/${id}`)
+          .then((res) => {
+            setBlogs(blogs.filter((e) => e._id != id));
+            toastNotify("success", "Xóa thành công");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
     });
   };
 
@@ -107,46 +123,75 @@ function Blogs() {
         if (tagsSelected.length > 0)
           formData.append("tags", JSON.stringify(tagsSelected));
 
-        axios
-          .post("/api/blogs", formData)
-          .then((res) => {
-            toastNotify("success", "Thêm blog thành công");
-            resetState();
-            setIsVisible(false);
-            setBlogs([res.data, ...blogs]);
-          })
-          .catch((err) => toastNotify("error", "Đã có lỗi xảy ra"));
+        confirm({
+          title: "Bạn chắc chắn muốn thêm blog này?",
+          icon: <ExclamationCircleOutlined />,
+          onOk() {
+            axios
+              .post("/api/blogs", formData)
+              .then((res) => {
+                toastNotify("success", "Thêm blog thành công");
+                resetState();
+                setIsVisible(false);
+                setBlogs([res.data, ...blogs]);
+              })
+              .catch((err) => toastNotify("error", "Đã có lỗi xảy ra"));
+          },
+          onCancel() {
+            console.log("Cancel");
+          },
+        });
       }
     } else if (currentTab === "blog-categories") {
       if (!categoryName)
         return toastNotify("warn", "Tên danh mục không được để trống");
-      axios
-        .post("/api/blogs/categories", { name: categoryName })
-        .then((res) => {
-          toastNotify("success", "Thêm danh mục blog thành công");
-          setCategoryName("");
-          setIsVisible(false);
-          setBlogCategories([res.data, ...blogCategories]);
-        })
-        .catch((err) => {
-          console.log(err);
-          toastNotify("error", "Đã có lỗi xảy ra");
-        });
+
+      confirm({
+        title: "Bạn chắc chắn muốn thêm danh mục blog này?",
+        icon: <ExclamationCircleOutlined />,
+        onOk() {
+          axios
+            .post("/api/blogs/categories", { name: categoryName })
+            .then((res) => {
+              toastNotify("success", "Thêm danh mục blog thành công");
+              setCategoryName("");
+              setIsVisible(false);
+              setBlogCategories([res.data, ...blogCategories]);
+            })
+            .catch((err) => {
+              console.log(err);
+              toastNotify("error", "Đã có lỗi xảy ra");
+            });
+        },
+        onCancel() {
+          console.log("Cancel");
+        },
+      });
     } else if (currentTab === "blog-tags") {
       if (!tagName)
         return toastNotify("warn", "Tên blog tag không được để trống");
-      axios
-        .post("/api/blogs/tags", { tag: tagName })
-        .then((res) => {
-          toastNotify("success", "Thêm blog tag thành công");
-          setTagName("");
-          setIsVisible(false);
-          setBlogTags([res.data, ...blogTags]);
-        })
-        .catch((err) => {
-          console.log(err);
-          toastNotify("error", "Đã có lỗi xảy ra");
-        });
+
+      confirm({
+        title: "Bạn chắc chắn muốn thêm blog tag này?",
+        icon: <ExclamationCircleOutlined />,
+        onOk() {
+          axios
+            .post("/api/blogs/tags", { tag: tagName })
+            .then((res) => {
+              toastNotify("success", "Thêm blog tag thành công");
+              setTagName("");
+              setIsVisible(false);
+              setBlogTags([res.data, ...blogTags]);
+            })
+            .catch((err) => {
+              console.log(err);
+              toastNotify("error", "Đã có lỗi xảy ra");
+            });
+        },
+        onCancel() {
+          console.log("Cancel");
+        },
+      });
     }
   };
 
@@ -168,57 +213,97 @@ function Blogs() {
         formData.append("tags", JSON.stringify(tagsSelected));
       if (image) formData.append("cover", image);
 
-      axios.put(`/api/blogs/${blogId}`, formData).then((res) => {
-        setIsVisible(false);
-        // dispatch(updateBrand(res.data));
-        let _i = _.findIndex(blogs, { _id: res.data._id });
-        if (_i > -1)
-          setBlogs([
-            ...blogs.slice(0, _i),
-            res.data,
-            ...blogs.slice(_i + 1, blogs.length),
-          ]);
-        else setBlogs([res.data, ...blogs.slice(0, _i)]);
-        resetState();
+      confirm({
+        title: "Bạn chắc chắn muốn cập nhật thông tin blog này?",
+        icon: <ExclamationCircleOutlined />,
+        onOk() {
+          axios
+            .put(`/api/blogs/${blogId}`, formData)
+            .then((res) => {
+              setIsVisible(false);
+              // dispatch(updateBrand(res.data));
+              let _i = _.findIndex(blogs, { _id: res.data._id });
+              if (_i > -1)
+                setBlogs([
+                  ...blogs.slice(0, _i),
+                  res.data,
+                  ...blogs.slice(_i + 1, blogs.length),
+                ]);
+              else setBlogs([res.data, ...blogs.slice(0, _i)]);
+              resetState();
+              toastNotify("success", "Cập nhật thành công");
+            })
+            .catch((err) => {
+              console.log(err);
+              toastNotify("error", "Đã có lỗi xảy ra");
+            });
+        },
+        onCancel() {
+          console.log("Cancel");
+        },
       });
     } else if (currentTab === "blog-categories") {
       if (!categoryName)
         return toastNotify("warn", "Tên danh mục không được để trống");
-      axios
-        .put(`/api/blogs/categories/${blogCategoryId}`, { name: categoryName })
-        .then((res) => {
-          const idx = blogCategories.findIndex((e) => e._id === blogCategoryId);
-          setBlogCategories([
-            ...blogCategories.slice(0, idx),
-            res.data,
-            ...blogCategories.slice(idx + 1, blogCategories.length),
-          ]);
-          setCategoryName("");
-          setBlogTagId("");
-          setIsUpdate(false);
-          setIsVisible(false);
-          toastNotify("success", "Cập nhật danh mục blog thành công");
-        })
-        .catch((err) => toastNotify("error", "Đã có lỗi xảy ra"));
+
+      confirm({
+        title: "Bạn chắc chắn muốn cập nhật thông tin danh mục blog này?",
+        icon: <ExclamationCircleOutlined />,
+        onOk() {
+          axios
+            .put(`/api/blogs/categories/${blogCategoryId}`, {
+              name: categoryName,
+            })
+            .then((res) => {
+              const idx = blogCategories.findIndex(
+                (e) => e._id === blogCategoryId
+              );
+              setBlogCategories([
+                ...blogCategories.slice(0, idx),
+                res.data,
+                ...blogCategories.slice(idx + 1, blogCategories.length),
+              ]);
+              setCategoryName("");
+              setBlogTagId("");
+              setIsUpdate(false);
+              setIsVisible(false);
+              toastNotify("success", "Cập nhật danh mục blog thành công");
+            })
+            .catch((err) => toastNotify("error", "Đã có lỗi xảy ra"));
+        },
+        onCancel() {
+          console.log("Cancel");
+        },
+      });
     } else if (currentTab === "blog-tags") {
       if (!tagName)
         return toastNotify("warn", "Tên danh mục không được để trống");
-      axios
-        .put(`/api/blogs/tags/${blogTagId}`, { tag: tagName })
-        .then((res) => {
-          const idx = blogTags.findIndex((e) => e._id === blogTagId);
-          setBlogTags([
-            ...blogTags.slice(0, idx),
-            res.data,
-            ...blogTags.slice(idx + 1, blogTags.length),
-          ]);
-          setTagName("");
-          setBlogTagId("");
-          setIsUpdate(false);
-          setIsVisible(false);
-          toastNotify("success", "Cập nhật blog tag thành công");
-        })
-        .catch((err) => toastNotify("error", "Đã có lỗi xảy ra"));
+
+      confirm({
+        title: "Bạn chắc chắn muốn cập nhật thông tin danh mục blog này?",
+        icon: <ExclamationCircleOutlined />,
+        onOk() {
+          axios
+            .put(`/api/blogs/tags/${blogTagId}`, { tag: tagName })
+            .then((res) => {
+              const idx = blogTags.findIndex((e) => e._id === blogTagId);
+              setBlogTags([
+                ...blogTags.slice(0, idx),
+                res.data,
+                ...blogTags.slice(idx + 1, blogTags.length),
+              ]);
+              setTagName("");
+              setBlogTagId("");
+              setIsUpdate(false);
+              setIsVisible(false);
+              toastNotify("success", "Cập nhật blog tag thành công");
+            })
+            .catch((err) => toastNotify("error", "Đã có lỗi xảy ra"));
+        },
+        onCancel() {
+          console.log("Cancel");
+        },
+      });
     }
   };
 
@@ -284,9 +369,9 @@ function Blogs() {
       title: "Hành động",
       key: "actions",
       fixed: "right",
-      width: 200,
+      width: 150,
       render: (text, record) => (
-        <>
+        <div className="flex justify-between">
           <Button onClick={() => showDataUpdate(record)} type="primary">
             Sửa
           </Button>
@@ -297,7 +382,7 @@ function Blogs() {
           >
             Xóa
           </Button>
-        </>
+        </div>
       ),
     },
   ];
@@ -682,7 +767,7 @@ function Blogs() {
             onChange={(_pagination, filters, sorter) =>
               setPagination(_pagination)
             }
-            scroll={{ x: "125%" }}
+            scroll={{ x: "100%" }}
           />
         </TabPane>
         <TabPane tab="Danh mục blog" key="blog-categories">

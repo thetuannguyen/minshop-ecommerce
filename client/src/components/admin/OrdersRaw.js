@@ -1,5 +1,5 @@
-import { DownloadOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Input, Select, Table, Tabs, Tag } from "antd";
+import { DownloadOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import { Button, Checkbox, Input, Modal, Select, Table, Tabs, Tag } from "antd";
 import axios from "axios";
 import * as FileSaver from "file-saver";
 import React, { useState } from "react";
@@ -13,6 +13,10 @@ const fileType =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
 
+const { confirm } = Modal;
+const { Option } = Select;
+const { TabPane } = Tabs;
+
 function OrdersRaw({
   orders,
   products,
@@ -22,9 +26,6 @@ function OrdersRaw({
   isAddOrderRaw,
   setIsAddOrderRaw,
 }) {
-  const { Option } = Select;
-  const { TabPane } = Tabs;
-
   // tabs orders raw
   const [currentTab, setCurrentTab] = useState("orders-all");
   const [pagination, setPagination] = useState({ current: 1, pageSize: 4 });
@@ -115,22 +116,36 @@ function OrdersRaw({
     if (!name) return toastNotify("warn", "Họ tên không được để trống");
     if (!phone) return toastNotify("warn", "Điện thoại không được để trống");
     if (!address) return toastNotify("warn", "Địa chỉ không được để trống");
-    if (_productsSelected.length === 0) return;
+    if (_productsSelected.length === 0)
+      return toastNotify("warn", "Chọn sản phẩm cho đơn hàng");
     // if (shipType) return toastNotify("warn", "Hãy chọn hình thức vận chuyển");
-    axios
-      .post("/api/orders/admin/checkout", {
-        products: _productsSelected,
-        name,
-        phone,
-        address,
-        note,
-        shipType,
-        total: getTotalPrice() + (shipType === "fast" ? 40000 : 0),
-      })
-      .then((res) => {
-        toastNotify("success", "Thêm thành công");
-        setTimeout(() => addOrder(res.data), 1000);
-      });
+
+    confirm({
+      title: "Bạn chắc chắn muốn thêm đơn hàng nháp này này?",
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        axios
+          .post("/api/orders/admin/checkout", {
+            products: _productsSelected,
+            name,
+            phone,
+            address,
+            note,
+            shipType,
+            total: getTotalPrice() + (shipType === "fast" ? 40000 : 0),
+          })
+          .then((res) => {
+            toastNotify("success", "Thêm đơn hàng thành công");
+            setTimeout(() => addOrder(res.data), 1000);
+          })
+          .catch((err) =>
+            toastNotify("error", "Đã có lỗi xảy ra. Vui lòng thử lại sau")
+          );
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
   }
 
   const handleDeleteOrder = (id) => {

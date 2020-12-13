@@ -1,16 +1,20 @@
-import React, { useEffect, useState } from "react";
+import { DownloadOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import { Button, Checkbox, Input, Table, Tabs, Tag, Modal } from "antd";
 import axios from "axios";
+import * as FileSaver from "file-saver";
+import React, { useState } from "react";
+import * as XLSX from "xlsx";
 import { formatDate } from "../../utils/formatDate";
 import formatPrice from "../../utils/formatPrice";
-import { Button, Input, Table, Tag, Tabs, Checkbox } from "antd";
-import { DownloadOutlined } from "@ant-design/icons";
-import * as FileSaver from "file-saver";
-import * as XLSX from "xlsx";
+import toastNotify from "../../utils/toastNotify";
 import OrderDetail from "./OrderDetail";
 
 const fileType =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
+
+const { confirm } = Modal;
+const { TabPane } = Tabs;
 
 function Orders({
   orders,
@@ -19,8 +23,6 @@ function Orders({
   updateOrders,
   deleteOrder,
 }) {
-  const { TabPane } = Tabs;
-
   const [currentTab, setCurrentTab] = useState("orders-all");
   const [pagination, setPagination] = useState({ current: 1, pageSize: 4 });
 
@@ -58,10 +60,22 @@ function Orders({
   };
 
   const handleCancelOrder = (id) => {
-    axios
-      .get(`/api/orders/${id}/cancel`)
-      .then((res) => updateOrders(res.data))
-      .catch((err) => console.log(err));
+    confirm({
+      title: "Bạn chắc chắn muốn hủy đơn hàng này này?",
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        axios
+          .get(`/api/orders/${id}/cancel`)
+          .then((res) => {
+            updateOrders(res.data);
+            toastNotify("success", "Hủy đơn hàng thành công");
+          })
+          .catch((err) => console.log(err));
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
   };
 
   const columns = [

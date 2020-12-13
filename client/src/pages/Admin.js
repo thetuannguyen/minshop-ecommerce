@@ -1,28 +1,27 @@
+import {
+  AppstoreOutlined,
+  MailOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
+import { Button, Menu, Modal } from "antd";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Menu, Button, Modal } from "antd";
-import {
-  MailOutlined,
-  AppstoreOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
-
 import AdminAuth from "../components/admin/AdminAuth";
+import Banners from "../components/admin/Banners";
+import Blogs from "../components/admin/Blogs";
 import Brands from "../components/admin/Brands";
 import Categories from "../components/admin/Categories";
 import Contacts from "../components/admin/Contacts";
+import Coupons from "../components/admin/Coupons";
 import Dashboard from "../components/admin/Dashboard";
+import Discounts from "../components/admin/Discounts";
+import Orders from "../components/admin/Orders";
+import OrdersCOD from "../components/admin/OrdersCOD";
+import OrdersRaw from "../components/admin/OrdersRaw";
 import Products from "../components/admin/Products";
 import Users from "../components/admin/Users";
 import { logout } from "../redux/actions/auth";
-import Orders from "../components/admin/Orders";
-import Discounts from "../components/admin/Discounts";
-import Coupons from "../components/admin/Coupons";
-import Blogs from "../components/admin/Blogs";
-import OrdersRaw from "../components/admin/OrdersRaw";
-import OrdersCOD from "../components/admin/OrdersCOD";
-import Banners from "../components/admin/Banners";
 import toastNotify from "../utils/toastNotify";
 
 function Admin() {
@@ -107,6 +106,15 @@ function Admin() {
     setUsers(users.filter((u) => u._id != id));
   };
 
+  const updateUser = (user) => {
+    const idx = users.findIndex((e) => e._id === user._id);
+    setUsers([
+      ...users.slice(0, idx),
+      user,
+      ...users.slice(idx + 1, users.length),
+    ]);
+  };
+
   const handleOnAddOrder = () => {
     setCurrentTab("orders-raw");
     setIsAddOrderRaw(true);
@@ -144,6 +152,7 @@ function Admin() {
         users={users.filter((u) => u._id != user.id)}
         addUser={addUser}
         deleteUser={deleteUser}
+        updateUser={updateUser}
       />
     ) : currentTab === "products" ? (
       <Products

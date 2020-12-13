@@ -280,7 +280,9 @@ const updateOrder = async (req, res) => {
         `Thay đổi sản phẩm trong đơn hàng`,
       ];
     }
-
+    if (!updateData || !Object.keys(updateData).length) {
+      return res.status(400).json({ order: "Không có gì thay đổi" });
+    }
     const _order = await Order.findByIdAndUpdate(id, updateData, { new: true });
     if (!_order) return res.status(404).json({ msg: "Not found" });
     const newOrderHistory = new OrderHistory({

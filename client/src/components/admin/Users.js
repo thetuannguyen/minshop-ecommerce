@@ -1,30 +1,16 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Form, Input, InputNumber, Button, Modal, Table } from "antd";
-import { DownloadOutlined } from "@ant-design/icons";
+import { Input, Button, Modal, Table, Tag } from "antd";
+import { DownloadOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 
 import toastNotify from "../../utils/toastNotify";
 import { formatDate } from "../../utils/formatDate";
 
-const layout = {
-  labelCol: { span: 8 },
-  wrapperCol: { span: 16 },
-};
+const { confirm } = Modal;
 
-const validateMessages = {
-  required: "${label} is required!",
-  types: {
-    email: "${label} is not validate email!",
-    number: "${label} is not a validate number!",
-  },
-  number: {
-    range: "${label} must be between ${min} and ${max}",
-  },
-};
-
-function Users({ users, addUser, deleteUser }) {
+function Users({ users, addUser, deleteUser, updateUser }) {
   const [isVisible, setIsVisible] = useState(false);
 
   const [name, setName] = useState("");
@@ -141,6 +127,48 @@ function Users({ users, addUser, deleteUser }) {
     setIsUpdate(false);
   };
 
+  const disableUser = (id) => {
+    confirm({
+      title: "Bạn chắc chắn muốn vô hiệu hóa tài khản này?",
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        axios
+          .post("/api/users/deactivate", { id })
+          .then((res) => {
+            updateUser(res.data);
+            toastNotify("success", "Disable người dùng thành công");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
+  const enableUser = (id) => {
+    confirm({
+      title: "Bạn chắc chắn muốn khôi phục tài khản này?",
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        axios
+          .post("/api/users/activate", { id })
+          .then((res) => {
+            updateUser(res.data);
+            toastNotify("success", "Enable người dùng thành công");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
   const columns = [
     {
       title: "STT",
@@ -163,9 +191,43 @@ function Users({ users, addUser, deleteUser }) {
       dataIndex: "name",
       key: "name",
     },
+    {
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
+      render: (text) =>
+        text === "ROLE_USER" ? (
+          <Tag color="#87d068">USER</Tag>
+        ) : (
+          <Tag color="#ff4d4f">ADMIN</Tag>
+        ),
+    },
     { title: "Số điện thoại", dataIndex: "phone", key: "phone" },
     { title: "Ngày sinh", dataIndex: "birthday", key: "birthday" },
     { title: "Giới tính", dataIndex: "gender", key: "gender" },
+    {
+      title: "Hành động",
+      key: "actions",
+      fixed: "right",
+      width: 100,
+      render: (text, record) => (
+        <>
+          {record.role === "ROLE_USER" && record.isActive ? (
+            <Button
+              type="primary"
+              danger
+              onClick={() => disableUser(record._id)}
+            >
+              Disable
+            </Button>
+          ) : record.role === "ROLE_USER" && !record.isActive ? (
+            <Button type="primary" onClick={() => enableUser(record._id)}>
+              Enable
+            </Button>
+          ) : null}
+        </>
+      ),
+    },
   ];
 
   const exportToCSV = (csvData, fileName) => {

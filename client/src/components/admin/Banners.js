@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { Button, Modal, Table } from "antd";
 import axios from "axios";
-import formatPrice from "../../utils/formatPrice";
-import { Button, Input, Table, Modal, Radio } from "antd";
+import React, { useEffect, useRef, useState } from "react";
 import toastNotify from "../../utils/toastNotify";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import parseHTML from "html-react-parser";
+
+const { confirm } = Modal;
 
 function Banners() {
   const [banners, setBanners] = useState([]);
@@ -30,9 +29,23 @@ function Banners() {
   }, []);
 
   const handleDelete = (id) => {
-    axios.delete(`/api/banners/${id}`).then((res) => {
-      toastNotify("success", "Xóa thành công");
-      setBanners(banners.filter((e) => e._id != id));
+    confirm({
+      title: "Bạn chắc chắn muốn xóa banner này?",
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        axios
+          .delete(`/api/banners/${id}`)
+          .then((res) => {
+            toastNotify("success", "Xóa thành công");
+            setBanners(banners.filter((e) => e._id != id));
+          })
+          .catch((err) => {
+            toastNotify("error", "Đã có lỗi xảy ra");
+          });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
     });
   };
 
@@ -49,15 +62,24 @@ function Banners() {
       let formData = new FormData();
       formData.append("image", image);
 
-      axios
-        .post("/api/banners", formData)
-        .then((res) => {
-          resetState();
-          setBanners([res.data, ...banners]);
-          toastNotify("success", "Thêm thành công");
-          setIsVisible(false);
-        })
-        .catch((err) => toastNotify("error", "Đã có lỗi xảy ra"));
+      confirm({
+        title: "Bạn chắc chắn muốn thêm banner này?",
+        icon: <ExclamationCircleOutlined />,
+        onOk() {
+          axios
+            .post("/api/banners", formData)
+            .then((res) => {
+              resetState();
+              setBanners([res.data, ...banners]);
+              toastNotify("success", "Thêm thành công");
+              setIsVisible(false);
+            })
+            .catch((err) => toastNotify("error", "Đã có lỗi xảy ra"));
+        },
+        onCancel() {
+          console.log("Cancel");
+        },
+      });
     }
   };
 
