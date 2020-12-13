@@ -270,11 +270,6 @@ function ProductDetail() {
                     Thông tin
                   </a>
                 </li>
-                <li>
-                  <a data-toggle="tab" href="#tab-reviews">
-                    Đánh giá
-                  </a>
-                </li>
               </ul>
               <div className="tab-content">
                 <div className="tab-pane fade active in" id="tab-description">
@@ -290,120 +285,6 @@ function ProductDetail() {
                 </div>
                 <div className="tab-pane fade" id="tab-info">
                   <p>{parseHTML(product.description)}</p>
-                </div>
-                <div id="tab-reviews" className="tab-pane fade">
-                  {isAuthenticated ? (
-                    <div className="comments-section">
-                      <ul className="comments-list">
-                        {comments &&
-                          comments.map((e) => (
-                            <li className="comment">
-                              <div className="comment-wrap">
-                                <div className="comment-img">
-                                  <img src="/img/user-default.jpg" />
-                                </div>
-                                <div className="comment-block">
-                                  <div className="comment-header">
-                                    <span className="comment-author">
-                                      <a href="#">{e.user.name}</a>
-                                    </span>
-                                    <span>{formatDate(e.createdAt)}</span>
-                                    {/* <span className="pull-right">
-                                      <a
-                                        className="comment-reply-link"
-                                        href="#"
-                                      >
-                                        <i className="fa fa-reply" />
-                                        <span className="hidden-sm">
-                                          {" "}
-                                          Trả lời
-                                        </span>
-                                      </a>
-                                    </span> */}
-                                  </div>
-                                  <div className="comment-content">
-                                    <p>{e.content}</p>
-                                  </div>
-                                </div>
-                              </div>
-                              <ul className="children">
-                                {e.replies &&
-                                  e.replies.length > 0 &&
-                                  e.replies.map((reply) => (
-                                    <li className="comment">
-                                      <div className="comment-wrap">
-                                        <div className="comment-img">
-                                          <img
-                                            alt=""
-                                            src="/img/user-default.jpg"
-                                          />
-                                        </div>
-                                        <div className="comment-block">
-                                          <div className="comment-header">
-                                            <span className="comment-author">
-                                              <a href="#">ADMIN</a>
-                                            </span>
-                                            <span>
-                                              {formatDate(e.createdAt)}
-                                            </span>
-                                            {/* <span className="pull-right">
-                                            <a
-                                              className="comment-reply-link"
-                                              href="#"
-                                            >
-                                              <i className="fa fa-reply" />
-                                              <span className="hidden-sm">
-                                                {" "}
-                                                Trả lời
-                                              </span>
-                                            </a>
-                                          </span> */}
-                                          </div>
-                                          <div className="comment-content">
-                                            <p>{reply.content}</p>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </li>
-                                  ))}
-                              </ul>
-                            </li>
-                          ))}
-                      </ul>
-                      <div className="respond-wrap">
-                        <h3 className="comment-reply-title">Viết bình luận</h3>
-                        <form className="comment-form">
-                          <div className="row">
-                            <div className="comment-form-comment col-md-12">
-                              <textarea
-                                placeholder="Bình luận *"
-                                id="comment"
-                                name="comment"
-                                cols={40}
-                                rows={6}
-                                value={comment}
-                                onChange={(e) => setComment(e.target.value)}
-                              />
-                            </div>
-                            <div
-                              className="col-md-12 submit-wrap"
-                              onClick={() => {
-                                if (!comment.trim()) return;
-                                addComment();
-                              }}
-                              style={{ cursor: "pointer" }}
-                            >
-                              <div className="form-submit">Gửi bình luận</div>
-                            </div>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-4xl text-blue-600 mt-8 text-center">
-                      Bạn cần đăng nhập để thực hiện tính năng này
-                    </div>
-                  )}
                 </div>
               </div>
             </div>

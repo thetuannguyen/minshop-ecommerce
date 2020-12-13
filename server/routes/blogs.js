@@ -11,11 +11,6 @@ router
   .route("/")
   .get(blogController.getAll)
   .post(isAuth, isAdmin, uploadFile("cover", false), blogController.addBlog);
-router
-  .route("/:id")
-  .get(blogController.getById)
-  .put(isAuth, isAdmin, uploadFile("cover", false), blogController.updateOne)
-  .delete(isAuth, isAdmin, blogController.deleteOne);
 
 // blog categories route
 router
@@ -28,6 +23,7 @@ router
   .delete(isAuth, isAdmin, blogController.deleteBlogCategory);
 
 // blog tags route
+
 router
   .route("/tags")
   .get(blogController.getAllTags)
@@ -40,5 +36,11 @@ router
 router
   .route("/upload")
   .post(uploadFile("file", true), blogController.uploadImgContent);
+
+router
+  .route("/:id")
+  .get(blogController.getById)
+  .put(isAuth, isAdmin, uploadFile("cover", false), blogController.updateOne)
+  .delete(isAuth, isAdmin, blogController.deleteOne);
 
 module.exports = router;

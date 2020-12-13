@@ -163,7 +163,11 @@ function Home() {
                                   data-slide-to={1}
                                 />
                               </ol>
-                              <div className="carousel-inner" role="listbox">
+                              <Link
+                                to={`/products/${e._id}`}
+                                className="carousel-inner"
+                                role="listbox"
+                              >
                                 {e.images &&
                                   e.images.map((image, index) => (
                                     <div
@@ -175,7 +179,7 @@ function Home() {
                                       }
                                     ></div>
                                   ))}
-                              </div>
+                              </Link>
                             </div>
                             <div className="vertical-icon">
                               <a
@@ -304,7 +308,11 @@ function Home() {
                                   data-slide-to={1}
                                 />
                               </ol>
-                              <div className="carousel-inner" role="listbox">
+                              <Link
+                                to={`/products/${e._id}`}
+                                className="carousel-inner"
+                                role="listbox"
+                              >
                                 {e.images &&
                                   e.images.map((image, index) => (
                                     <div
@@ -316,7 +324,7 @@ function Home() {
                                       }
                                     ></div>
                                   ))}
-                              </div>
+                              </Link>
                             </div>
                             <div className="vertical-icon">
                               <a
@@ -427,7 +435,11 @@ function Home() {
                               />
                               <li data-target={`#${e._id}`} data-slide-to={1} />
                             </ol>
-                            <div className="carousel-inner" role="listbox">
+                            <Link
+                              to={`/products/${e._id}`}
+                              className="carousel-inner"
+                              role="listbox"
+                            >
                               {e.images &&
                                 e.images.map((image, index) => (
                                   <div
@@ -439,7 +451,7 @@ function Home() {
                                     }
                                   ></div>
                                 ))}
-                            </div>
+                            </Link>
                           </div>
                           <div className="vertical-icon">
                             <a

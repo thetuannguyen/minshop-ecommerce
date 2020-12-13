@@ -97,27 +97,6 @@ function OrdersCOD({
       ),
     },
     {
-      title: "Sản phẩm",
-      dataIndex: "products",
-      key: "products",
-      render: (text) =>
-        text.map((e, index) => (
-          <div>
-            <span style={{ fontSize: "20px", fontWeight: "800" }}>
-              {e.amount}
-            </span>
-            {" x "}
-            <span className=" italic">
-              {e.productId && e.productId.name ? (
-                e.productId.name
-              ) : (
-                <span className="text-red-600">Sản phẩm đã bị xóa</span>
-              )}
-            </span>
-          </div>
-        )),
-    },
-    {
       title: "Số điện thoại",
       dataIndex: "phone",
       key: "phone",
@@ -279,7 +258,7 @@ function OrdersCOD({
                 onChange={(_pagination, filters, sorter) =>
                   setPagination(_pagination)
                 }
-                scroll={{ x: "200%" }}
+                scroll={{ x: "100%" }}
               />
             </TabPane>
             <TabPane tab="Đang xử lý" key="orders-pending">
@@ -341,7 +320,7 @@ function OrdersCOD({
                 onChange={(_pagination, filters, sorter) =>
                   setPagination(_pagination)
                 }
-                scroll={{ x: "200%" }}
+                scroll={{ x: "100%" }}
               />
             </TabPane>
             <TabPane tab="Đã đóng gói" key="orders-packed">
@@ -361,7 +340,7 @@ function OrdersCOD({
                 onChange={(_pagination, filters, sorter) =>
                   setPagination(_pagination)
                 }
-                scroll={{ x: "200%" }}
+                scroll={{ x: "100%" }}
               />
             </TabPane>
             <TabPane tab="Đã giao hàng" key="orders-delivered">
@@ -381,7 +360,7 @@ function OrdersCOD({
                 onChange={(_pagination, filters, sorter) =>
                   setPagination(_pagination)
                 }
-                scroll={{ x: "200%" }}
+                scroll={{ x: "100%" }}
               />
             </TabPane>
             <TabPane tab="Thành công" key="orders-success">
@@ -401,7 +380,7 @@ function OrdersCOD({
                 onChange={(_pagination, filters, sorter) =>
                   setPagination(_pagination)
                 }
-                scroll={{ x: "200%" }}
+                scroll={{ x: "100%" }}
               />
             </TabPane>
             <TabPane tab="Bị hủy" key="orders-cancel">
@@ -421,7 +400,7 @@ function OrdersCOD({
                 onChange={(_pagination, filters, sorter) =>
                   setPagination(_pagination)
                 }
-                scroll={{ x: "200%" }}
+                scroll={{ x: "100%" }}
               />
             </TabPane>
           </Tabs>

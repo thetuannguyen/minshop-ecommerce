@@ -186,27 +186,6 @@ function OrdersRaw({
       ),
     },
     {
-      title: "Sản phẩm",
-      dataIndex: "products",
-      key: "products",
-      render: (text) =>
-        text.map((e, index) => (
-          <div>
-            <span style={{ fontSize: "20px", fontWeight: "800" }}>
-              {e.amount}
-            </span>
-            {" x "}
-            <span className=" italic">
-              {e.productId && e.productId.name ? (
-                e.productId.name
-              ) : (
-                <span className="text-red-600">Sản phẩm đã bị xóa</span>
-              )}
-            </span>
-          </div>
-        )),
-    },
-    {
       title: "Số điện thoại",
       dataIndex: "phone",
       key: "phone",
@@ -301,24 +280,22 @@ function OrdersRaw({
               {productsSelected.length > 0 &&
                 productsSelected.map((product) => (
                   <div className="my-4 flex justify-between">
-                    <div className="w-1/2 flex justify-between">
+                    <div className="w-1/2 flex justify-start">
                       <img
                         className="h-24 m-0"
                         src={`/images/${product.images[0]}`}
                         alt=""
                       />
-                      <div className="my-auto ml-4">{product.name}</div>
+                      <div className="ml-4">{product.name}</div>
                     </div>
                     <div className="w-1/2 flex text-right my-auto pl-24">
-                      <div className="flex-1">
-                        {formatPrice(product.price)}₫
-                      </div>
-                      <div className="flex-1 mx-4"> x </div>
+                      <div className="">{formatPrice(product.price)}₫</div>
+                      <div className="mx-2"> x </div>
                       <input
                         className="w-16 mx-4border border-gray-600"
                         type="number"
                         onChange={(e) => {
-                          if (e.target.value.includes("-"))
+                          if (!/^[0-9]*$/gi.test(e.target.value))
                             return toastNotify(
                               "warn",
                               "Bạn chỉ có thể nhập số dương"
@@ -330,7 +307,7 @@ function OrdersRaw({
                         }}
                         value={getAmountOfProductSelected(product._id)}
                       />
-                      <span className="flex-1">
+                      <span>
                         {formatPrice(
                           product.price *
                             getAmountOfProductSelected(product._id)
@@ -338,7 +315,7 @@ function OrdersRaw({
                         ₫
                       </span>
                       <button
-                        className="flex-1"
+                        className="ml-auto"
                         onClick={() => handleDeleteProductSelected(product._id)}
                       >
                         <i className="fa fa-trash-o" />
@@ -596,7 +573,7 @@ function OrdersRaw({
                     onChange={(_pagination, filters, sorter) =>
                       setPagination(_pagination)
                     }
-                    scroll={{ x: "200%" }}
+                    scroll={{ x: "100%" }}
                   />
                 </TabPane>
                 <TabPane tab="Đang xử lý" key="orders-pending">
@@ -658,7 +635,7 @@ function OrdersRaw({
                     onChange={(_pagination, filters, sorter) =>
                       setPagination(_pagination)
                     }
-                    scroll={{ x: "200%" }}
+                    scroll={{ x: "100%" }}
                   />
                 </TabPane>
                 <TabPane tab="Đã đóng gói" key="orders-packed">
@@ -678,7 +655,7 @@ function OrdersRaw({
                     onChange={(_pagination, filters, sorter) =>
                       setPagination(_pagination)
                     }
-                    scroll={{ x: "200%" }}
+                    scroll={{ x: "100%" }}
                   />
                 </TabPane>
                 <TabPane tab="Đã giao hàng" key="orders-delivered">
@@ -698,7 +675,7 @@ function OrdersRaw({
                     onChange={(_pagination, filters, sorter) =>
                       setPagination(_pagination)
                     }
-                    scroll={{ x: "200%" }}
+                    scroll={{ x: "100%" }}
                   />
                 </TabPane>
                 <TabPane tab="Thành công" key="orders-success">
@@ -718,7 +695,7 @@ function OrdersRaw({
                     onChange={(_pagination, filters, sorter) =>
                       setPagination(_pagination)
                     }
-                    scroll={{ x: "200%" }}
+                    scroll={{ x: "100%" }}
                   />
                 </TabPane>
                 <TabPane tab="Bị hủy" key="orders-cancel">
@@ -738,7 +715,7 @@ function OrdersRaw({
                     onChange={(_pagination, filters, sorter) =>
                       setPagination(_pagination)
                     }
-                    scroll={{ x: "200%" }}
+                    scroll={{ x: "100%" }}
                   />
                 </TabPane>
               </Tabs>

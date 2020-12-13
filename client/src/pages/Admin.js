@@ -23,7 +23,6 @@ import Blogs from "../components/admin/Blogs";
 import OrdersRaw from "../components/admin/OrdersRaw";
 import OrdersCOD from "../components/admin/OrdersCOD";
 import Banners from "../components/admin/Banners";
-import Responses from "../components/admin/Responses";
 import toastNotify from "../utils/toastNotify";
 
 function Admin() {
@@ -37,7 +36,6 @@ function Admin() {
   };
 
   const dispatch = useDispatch();
-  const [route, setRoute] = useState("dashboard");
   const [users, setUsers] = useState([]);
   const [orders, setOrders] = useState([]);
   const [contacts, setContacts] = useState([]);
@@ -163,8 +161,6 @@ function Admin() {
         subcategories={subcategories}
         dispatch={dispatch}
       />
-    ) : currentTab === "responses" ? (
-      <Responses />
     ) : currentTab === "contacts" ? (
       <Contacts contacts={contacts} deleteContact={deleteContact} />
     ) : currentTab === "orders" ? (
@@ -187,7 +183,9 @@ function Admin() {
       />
     ) : currentTab === "orders-cod" ? (
       <OrdersCOD
-        orders={orders.filter((e) => e.orderType === "COD")}
+        orders={orders.filter(
+          (e) => e.orderType === "COD" && !e.isCreatedByAdmin
+        )}
         products={products}
         handleOnAddOrder={handleOnAddOrder}
         updateOrders={updateOrders}
@@ -195,7 +193,9 @@ function Admin() {
       />
     ) : currentTab === "orders-vnpay" ? (
       <OrdersCOD
-        orders={orders.filter((e) => e.orderType === "VNPAY")}
+        orders={orders.filter(
+          (e) => e.orderType === "VNPAY" && !e.isCreatedByAdmin
+        )}
         products={products}
         handleOnAddOrder={handleOnAddOrder}
         updateOrders={updateOrders}
@@ -316,7 +316,6 @@ function Admin() {
               <Menu.Item key="products">Sản phẩm</Menu.Item>
               <Menu.Item key="brands">Thương hiệu</Menu.Item>
               <Menu.Item key="categories">Danh mục</Menu.Item>
-              <Menu.Item key="responses">Phản hồi sản phẩm</Menu.Item>
             </SubMenu>
             <SubMenu
               key="orders-management"

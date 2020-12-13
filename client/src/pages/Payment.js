@@ -249,7 +249,23 @@ function Payment({ coupon, checkout, checkoutNoAuth }) {
                 }}
                 value={orderData.phone}
               />
-
+              <input
+                type="text"
+                className={
+                  orderData.email
+                    ? "form-control"
+                    : "form-control required-field"
+                }
+                id="note"
+                placeholder="Email"
+                onChange={(e) =>
+                  setOrderData({
+                    ...orderData,
+                    email: e.target.value,
+                  })
+                }
+                value={orderData.email}
+              />
               <input
                 type="text"
                 className={

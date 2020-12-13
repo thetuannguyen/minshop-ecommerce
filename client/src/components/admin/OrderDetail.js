@@ -242,18 +242,18 @@ function OrderDetail({
                       src={`/images/${product.images[0]}`}
                       alt=""
                     />
-                    <div className="my-auto ml-4">{product.name}</div>
+                    <div className="ml-4">{product.name}</div>
                   </div>
                   <div className="w-1/2 flex text-right my-auto pl-24">
-                    <div className="flex-1">{formatPrice(product.price)}₫</div>
-                    <div className="flex-1 mx-4"> x </div>
+                    <div className="">{formatPrice(product.price)}₫</div>
+                    <div className="mx-2"> x </div>
                     <input
                       className="flex-1 mx-4 pl-4 w-4 border border-gray-600"
                       type="number"
                       defaultValue={1}
                       min={1}
                       onChange={(e) => {
-                        if (!e.target.value.includes("-"))
+                        if (!/^[0-9]*$/gi.test(e.target.value))
                           return toastNotify(
                             "warn",
                             "Bạn chỉ có thể nhập số dương"
@@ -266,7 +266,7 @@ function OrderDetail({
                       value={getAmountOfProductSelected(product._id)}
                       disabled={!currentOrder.isCreatedByAdmin}
                     />
-                    <span className="flex-1">
+                    <span className="">
                       {formatPrice(
                         product.price * getAmountOfProductSelected(product._id)
                       )}
@@ -354,6 +354,7 @@ function OrderDetail({
                       value={shipType}
                       style={{ width: "50%" }}
                       onChange={(value) => setShipType(value)}
+                      disabled={currentOrder.isCreatedByAdmin ? false : true}
                     >
                       <Option value="standard">Giao hàng tiêu chuẩn</Option>
                       <Option value="fast">Giao hàng nhanh</Option>
@@ -378,7 +379,7 @@ function OrderDetail({
               placeholder="Họ tên"
               onChange={(e) => setName(e.target.value)}
               value={name}
-              disable={currentOrder.isCreatedByAdmin ? true : false}
+              readOnly={currentOrder.isCreatedByAdmin ? false : true}
             />
             <input
               type="number"
@@ -395,7 +396,7 @@ function OrderDetail({
                 setPhone(e.target.value);
               }}
               value={phone}
-              disable={currentOrder.isCreatedByAdmin ? true : false}
+              readOnly={currentOrder.isCreatedByAdmin ? false : true}
             />
 
             <input
@@ -405,7 +406,7 @@ function OrderDetail({
               placeholder="Địa chỉ"
               onChange={(e) => setAddress(e.target.value)}
               value={address}
-              disable={currentOrder.isCreatedByAdmin ? true : false}
+              readOnly={currentOrder.isCreatedByAdmin ? false : true}
             />
             <input
               type="text"
@@ -414,7 +415,7 @@ function OrderDetail({
               placeholder="Ghi chú"
               onChange={(e) => setNote(e.target.value)}
               value={note}
-              disable={currentOrder.isCreatedByAdmin ? true : false}
+              readOnly={currentOrder.isCreatedByAdmin ? false : true}
             />
           </div>
         </div>

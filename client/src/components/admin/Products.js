@@ -223,16 +223,6 @@ function Products({ products, brands, categories, subcategories, dispatch }) {
       ),
     },
     {
-      title: "Link mô tả",
-      dataIndex: "describeLink",
-      key: "describeLink",
-      render: (text) => (
-        <a href={text} target="_blank">
-          {text}
-        </a>
-      ),
-    },
-    {
       title: "Mô tả",
       dataIndex: "description",
       key: "description",
@@ -241,23 +231,12 @@ function Products({ products, brands, categories, subcategories, dispatch }) {
     { title: "Giá", dataIndex: "price", key: "price" },
     { title: "Số lượng", dataIndex: "amount", key: "amount" },
     {
-      title: "Hình ảnh",
-      dataIndex: "images",
-      key: "images",
-      render: (text) =>
-        text
-          .slice(0, 2)
-          .map((e, index) => (
-            <img key={index} src={`/images/${e}`} alt="img" />
-          )),
-    },
-    {
       title: "Hành động",
       key: "actions",
       fixed: "right",
       width: 200,
       render: (text, record) => (
-        <>
+        <div className="flex justify-between">
           <Button onClick={() => showDataUpdate(record)} type="primary">
             Sửa
           </Button>
@@ -268,7 +247,7 @@ function Products({ products, brands, categories, subcategories, dispatch }) {
           >
             Xóa
           </Button>
-        </>
+        </div>
       ),
     },
   ];
@@ -576,7 +555,7 @@ function Products({ products, brands, categories, subcategories, dispatch }) {
         rowKey={(record) => record._id}
         pagination={pagination}
         onChange={(_pagination, filters, sorter) => setPagination(_pagination)}
-        scroll={{ x: "150%" }}
+        scroll={{ x: "100%" }}
       />
     </>
   );

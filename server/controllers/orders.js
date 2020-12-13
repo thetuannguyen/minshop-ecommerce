@@ -71,9 +71,9 @@ const getAllOfUser = async (req, res) => {
 // thêm đơn hàng không cần đăng nhập
 const addOneNoAuth = async (req, res) => {
   try {
+    const { email } = req.body;
     const newOrder = new Order({ ...req.body });
     await newOrder.save();
-
     // save order history
     const newOrderHistory = new OrderHistory({
       order: newOrder._id,
@@ -81,7 +81,11 @@ const addOneNoAuth = async (req, res) => {
       description: "Mặt hàng được khởi tạo",
     });
     await newOrderHistory.save();
-
+    // send email order
+    const order = await Order.findById(newOrder._id)
+      .populate("products.productId", ["name", "price"])
+      .populate("user", ["name", "email"]);
+    sendMailOrder(email, order);
     res.json({ success: true });
   } catch (err) {
     // console.log(err);

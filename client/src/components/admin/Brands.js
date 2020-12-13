@@ -142,7 +142,7 @@ function Brands({ brands, dispatch }) {
       title: "Mô tả",
       dataIndex: "description",
       key: "description",
-      render: (text) => parseHTML(text),
+      render: (text) => <div className="max-3-line">{parseHTML(text)}</div>,
     },
     {
       title: "Hình ảnh",
