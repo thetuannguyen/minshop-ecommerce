@@ -10,19 +10,29 @@ const transporter = nodemailer.createTransport({
   //   user: "ol7sswpyi4q4ewdw@ethereal.email", // generated ethereal user
   //   pass: "b2WjccXrsyyQV61Er4", // generated ethereal password
   // },
-  service: "gmail",
-  host: "smtp.gmail.com",
-  port: 465,
+  //service: "gmail",
+  //host: "smtp.gmail.com",
+  //port: 465,
+  //auth: {
+  //  user: "bondnguyenclone@gmail.com",
+  //  pass: "Nguyenhoangtuan20@",
+  //},
+  host: "smtp.mailgun.org",
+  port: 587,
+  secure: false,
   auth: {
-    user: "bondnguyenclone@gmail.com",
-    pass: "Nguyenhoangtuan20@",
+    user: "postmaster@sandbox735822b9d69843ea84f1d236f2e9900e.mailgun.org",
+    pass: "44e4e65ad20246e333856dfb2a45d22d-4879ff27-cfee4cba"
   },
+  tls: {
+    rejectUnauthorized: false,
+  }
 });
 
 const sendMail = async (to, subject, data) => {
   // send mail with defined transport object
   let info = await transporter.sendMail({
-    from: "MIN Store", // sender address
+    from: "support@minbeauty.tk", // sender address
     to,
     subject,
     html: data,
