@@ -55,12 +55,12 @@ const sendMailOrder = async (to, order) => {
   try {
     let tableProducts = order.products.map(
       (e) =>
-        `<tr style={ font-size: "16px", font-style: "italic" }>
-        <td style={border: "1px solid black"}>${e.productId.name}</td>
-        <td style={ width: "10%", border: "1px solid black" }${e.amount}</td>
-        <td style={ width: "10%", border: "1px solid black" }>
-          ${formatPrice(e.productId.price)}₫
-        </td>
+        `<tr>
+        <td style="border: 1px solid black;">${e.productId.name}</td>
+        <td style="border: 1px solid black;">${e.amount}</td>
+        <td style="border: 1px solid black;">${formatPrice(
+          e.productId.price
+        )}₫</td>
       </tr>`
     );
 
@@ -75,8 +75,8 @@ const sendMailOrder = async (to, order) => {
       from: "MIN Store", // sender address
       to,
       subject: "Đơn hàng từ MIN Store",
-      html: `<div style={ font-size: "20px" }>
-          <div style={ font-size: "24px", font-weight: "1000" }>
+      html: `<div style="font-size: 20px">
+          <div style= "font-size: 24px; font-weight: 1000">
             Thông tin người nhận
           </div>
           <div>
@@ -91,40 +91,33 @@ const sendMailOrder = async (to, order) => {
           <div>
             Ghi chú: <strong>${order.note}</strong>
           </div>
-          <div style={ font-size: "24px", font-weight: "1000" }>
+          <div style="font-size: 24px; font-weight: 1000">
             Thông tin đơn hàng
           </div>
-          <table style={ width: "100%", margin: "auto" }>
+          <table style="width: 100%; border-collapse: collapse;">
             <tr>
-              <th>Hàng hóa</th>
-              <th>SL</th>
-              <th>GIá</th>
+              <th style="border: 1px solid black;">Hàng hóa</th>
+              <th style="border: 1px solid black;">SL</th>
+              <th style="border: 1px solid black;">GIá</th>
             </tr>
-            ${tableProducts}
+            ${tableProducts.join("")}
           </table>
-          <table
-            style={
-              font-weight: "1000",
-              width: "100%",
-              border-collapse: "collapse",
-              border: "1px solid black"
-            }
-          >
+          <table>
             <tr>
-              <td style={border: "1px solid black"}>Tạm tính</td>
-              <td style={border: "1px solid black"}>${formatPrice(
+              <td style="font-size: 20px; font-weight:600">Tạm tính</td>
+              <td style="font-size: 20px; font-weight:600">${formatPrice(
                 getTotalTmp()
               )}₫</td>
             </tr>
             <tr>
-              <td style={border: "1px solid black"}>Phí ship</td>
-              <td style={border: "1px solid black"}>${
+              <td style="font-size: 20px; font-weight:600">Phí ship</td>
+              <td style="font-size: 20px; font-weight:600">${
                 order.shipType === "fast" ? formatPrice(40000) : 0
               }₫</td>
             </tr>
             <tr>
-              <td style={border: "1px solid black"}>Tổng tiền</td>
-              <td style={border: "1px solid black"}>${formatPrice(
+              <td style="font-size: 20px; font-weight:600">Tổng tiền</td>
+              <td style="font-size: 20px; font-weight:600">${formatPrice(
                 order.total
               )}₫</td>
             </tr>

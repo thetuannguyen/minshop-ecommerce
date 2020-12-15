@@ -45,6 +45,11 @@ function Profile() {
   const [isVisible, setIsVisible] = useState(false);
   const [newPassword, setNewPassword] = useState("");
 
+  // filter order
+  const [orderStatusFilter, setOrderStatusFilter] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
   // pagination
   const [page, setPage] = useState(0);
 
@@ -759,20 +764,30 @@ function Profile() {
                       <strong>Lọc kết quả:</strong>
                       <div className="date-block">
                         <span>Từ ngày: </span>
-                        <input type="date" name="start-date" />
+                        <input
+                          onChange={(e) => setStartDate(e.target.value)}
+                          type="date"
+                          name="start-date"
+                        />
                       </div>
                       <div className="date-block">
                         <span>Đến ngày: </span>
-                        <input type="date" name="end-date" />
+                        <input
+                          onChange={(e) => setEndDate(e.target.value)}
+                          type="date"
+                          name="end-date"
+                        />
                       </div>
-                      <select>
-                        <option disabled hidden selected>
+                      <select
+                        onChange={(e) => setOrderStatusFilter(e.target.value)}
+                      >
+                        <option value="" selected>
                           Theo tình trạng
                         </option>
-                        <option>Chờ xử lý</option>
-                        <option>Đã gửi đi</option>
-                        <option>Đà đóng</option>
-                        <option>Đà hủy</option>
+                        <option value="pending">Chờ xử lý</option>
+                        <option value="delivered">Đã gửi đi</option>
+                        <option value="packed">Đà đóng</option>
+                        <option value="cancel">Đà hủy</option>
                       </select>
                     </div>
                     <table>
@@ -786,40 +801,61 @@ function Profile() {
                       </thead>
                       <tbody>
                         {orders &&
-                          orders.slice(page * 10, page * 10 + 10).map((e) => (
-                            <tr className="order-item">
-                              <td className="order-no">
-                                <a href="order-detail.html">09052017</a>
-                              </td>
-                              <td className="order-date">
-                                {formatDate(e.createdAt)}
-                              </td>
-                              <td className="order-sum">
-                                {formatPrice(e.total)}₫
-                              </td>
-                              {e.status === "pending" ? (
-                                <td className="order-status out-stock">
-                                  Chờ xử lý
+                          orders
+                            .filter((e) =>
+                              orderStatusFilter
+                                ? e.status === orderStatusFilter
+                                : true
+                            )
+                            .filter((e) => {
+                              console.log(new Date(e.createdAt).getTime());
+                              console.log(new Date(startDate).getTime());
+                              return startDate
+                                ? new Date(e.createdAt).getTime() >
+                                    new Date(startDate).getTime()
+                                : true;
+                            })
+                            .filter((e) =>
+                              endDate
+                                ? new Date(e.createdAt).getTime() <
+                                  new Date(endDate).getTime()
+                                : true
+                            )
+                            .slice(page * 10, page * 10 + 10)
+                            .map((e) => (
+                              <tr className="order-item">
+                                <td className="order-no">
+                                  <a href="order-detail.html">09052017</a>
                                 </td>
-                              ) : e.status === "packed" ? (
-                                <td className="order-status order-closed">
-                                  Đã đóng
+                                <td className="order-date">
+                                  {formatDate(e.createdAt)}
                                 </td>
-                              ) : e.status === "delivered" ? (
-                                <td className="order-status in-stock">
-                                  Đã chuyển đi
+                                <td className="order-sum">
+                                  {formatPrice(e.total)}₫
                                 </td>
-                              ) : e.status === "success" ? (
-                                <td className="order-status in-stock">
-                                  Đã chuyển đi
-                                </td>
-                              ) : e.status === "cancel" ? (
-                                <td className="order-status order-canceled">
-                                  Đã hủy
-                                </td>
-                              ) : null}
-                            </tr>
-                          ))}
+                                {e.status === "pending" ? (
+                                  <td className="order-status out-stock">
+                                    Chờ xử lý
+                                  </td>
+                                ) : e.status === "packed" ? (
+                                  <td className="order-status order-closed">
+                                    Đã đóng
+                                  </td>
+                                ) : e.status === "delivered" ? (
+                                  <td className="order-status in-stock">
+                                    Đã chuyển đi
+                                  </td>
+                                ) : e.status === "success" ? (
+                                  <td className="order-status in-stock">
+                                    Đã chuyển đi
+                                  </td>
+                                ) : e.status === "cancel" ? (
+                                  <td className="order-status order-canceled">
+                                    Đã hủy
+                                  </td>
+                                ) : null}
+                              </tr>
+                            ))}
                       </tbody>
                     </table>
                     <nav>
