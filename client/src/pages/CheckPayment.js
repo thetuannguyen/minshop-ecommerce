@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Redirect } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 
@@ -11,6 +11,8 @@ function CheckPayment() {
   const location = useLocation();
   const dispatch = useDispatch();
 
+  const [isSuccess, setIsSuccess] = useState(false)
+
   const [
     isAuthenticated,
     // products,
@@ -21,7 +23,6 @@ function CheckPayment() {
     // products.cart,
   ]);
 
-  const [isSuccess, setIsSuccess] = useState(false);
 
   function checkoutNoAuth(orderData) {
     console.log(orderData);
@@ -32,9 +33,6 @@ function CheckPayment() {
         dispatch({
           type: CLEAR_CART,
         });
-        setTimeout(() => {
-          window.location.href = "/cart";
-        }, 2000);
       });
   }
 
@@ -55,9 +53,13 @@ function CheckPayment() {
   }, [location]);
 
   return (
+    isSuccess ?
     <div className="container payment-main">
       <div className="row">Kiểm tra thanh toán</div>
-    </div>
+    </div> : <Redirect to={{
+      pathname: '/cart',
+      state: { step: 2}
+    }} />
   );
 }
 

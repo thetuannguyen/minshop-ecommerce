@@ -150,7 +150,7 @@ function Payment({ coupon, checkout, checkoutNoAuth }) {
                       Math.floor((coupon.discountRate * totalPrice) / 100) +
                       (orderData.shipType === "fast" ? 40000 : 0)
                   : totalPrice + (orderData.shipType === "fast" ? 40000 : 0),
-              coupon: Object.keys(coupon).length > 0 ? "coupon" : "",
+              coupon: Object.keys(coupon).length > 0 ? coupon : "",
             })
           );
           window.location.href = res.data.data;
@@ -239,13 +239,13 @@ function Payment({ coupon, checkout, checkoutNoAuth }) {
                 id="phone"
                 placeholder="Số điện thoại"
                 onChange={(e) => {
-                  if (e.target.value.includes("-"))
-                    return toastNotify("warn", "Bạn không thể nhập số âm");
-                  else
+                  if (/^[0-9]*$/gi.test(e.target.value))
                     setOrderData({
                       ...orderData,
                       phone: e.target.value,
                     });
+                  else
+                    return toastNotify("warn", "Bạn chỉ có thể nhập chữ số");
                 }}
                 value={orderData.phone}
               />

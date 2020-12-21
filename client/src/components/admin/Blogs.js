@@ -388,18 +388,28 @@ function Blogs() {
   ];
 
   const deleteBlogCategory = (id) => {
-    axios
-      .delete(`/api/blogs/categories/${id}`)
-      .then((res) => {
-        toastNotify("success", "Xóa danh mục blog thành công");
-        setBlogCategories(blogCategories.filter((e) => e._id !== id));
-      })
-      .catch((err) => {
-        if (err.response) {
-          return toastNotify("error", Object.values(err.response.data)[0]);
-        }
-        toastNotify("error", "Đã có lỗi xảy ra");
-      });
+    confirm({
+      title: "Bạn chắc chắn muốn xoá danh mục blog này?",
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        axios
+        .delete(`/api/blogs/categories/${id}`)
+        .then((res) => {
+          toastNotify("success", "Xóa danh mục blog thành công");
+          setBlogCategories(blogCategories.filter((e) => e._id !== id));
+        })
+        .catch((err) => {
+          if (err.response) {
+            return toastNotify("error", Object.values(err.response.data)[0]);
+          }
+          toastNotify("error", "Đã có lỗi xảy ra");
+        });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+    
   };
 
   const blogCategoryColumns = [
@@ -448,18 +458,28 @@ function Blogs() {
   ];
 
   const deleteBlogTag = (id) => {
-    axios
-      .delete(`/api/blogs/tags/${id}`)
-      .then((res) => {
-        toastNotify("success", "Xóa danh mục blog thành công");
-        setBlogTags(blogTags.filter((e) => e._id !== id));
-      })
-      .catch((err) => {
-        if (err.response) {
-          return toastNotify("error", Object.values(err.response.data)[0]);
-        }
-        toastNotify("error", "Đã có lỗi xảy ra");
-      });
+    confirm({
+      title: "Bạn chắc chắn muốn xoá blog tag này?",
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        axios
+        .delete(`/api/blogs/tags/${id}`)
+        .then((res) => {
+          toastNotify("success", "Xóa blog tag thành công");
+          setBlogTags(blogTags.filter((e) => e._id !== id));
+        })
+        .catch((err) => {
+          if (err.response) {
+            return toastNotify("error", Object.values(err.response.data)[0]);
+          }
+          toastNotify("error", "Đã có lỗi xảy ra");
+        });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+    
   };
 
   const blogTagColumns = [

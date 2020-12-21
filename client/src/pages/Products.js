@@ -350,7 +350,7 @@ function Products() {
                 <div className="row">
                   {currentProducts &&
                     currentProducts
-                      .slice(page * 6, page * 6 + 6)
+                      .slice(page * 9, page * 9 + 9)
                       .map((product) => (
                         <div className="col-item chair arm-chair col-xs-6 col-lg-4">
                           <div className="item-container">
@@ -481,7 +481,7 @@ function Products() {
                     )}
                     {currentProducts &&
                       currentProducts.length > 0 &&
-                      Array(Math.floor(currentProducts.length / 6) + 1)
+                      Array(Math.floor(currentProducts.length / 9) + 1)
                         .fill(1)
                         .map((e, index) => (
                           <a

@@ -29,7 +29,7 @@ function Categories({ categories, subcategories, dispatch }) {
   const [categoryIdSelected, setCategoryIdSelected] = useState("");
 
   const [searchInput, setSearchInput] = useState("");
-  const [pagination, setPagination] = useState({ current: 1, pageSize: 6 });
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 10 });
 
   function callback(key) {
     setCurrentTab(key);

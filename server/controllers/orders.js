@@ -71,7 +71,7 @@ const getAllOfUser = async (req, res) => {
 // thêm đơn hàng không cần đăng nhập
 const addOneNoAuth = async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email, coupon } = req.body;
     const newOrder = new Order({ ...req.body });
     await newOrder.save();
     // save order history
@@ -81,6 +81,11 @@ const addOneNoAuth = async (req, res) => {
       description: "Mặt hàng được khởi tạo",
     });
     await newOrderHistory.save();
+    if (coupon) {
+      await Coupon.findByIdAndUpdate(coupon._id, {
+        usableCount: coupon.usableCount - 1,
+      });
+    }
     // send email order
     const order = await Order.findById(newOrder._id)
       .populate("products.productId", ["name", "price"])
@@ -88,7 +93,7 @@ const addOneNoAuth = async (req, res) => {
     sendMailOrder(email, order);
     res.json({ success: true });
   } catch (err) {
-    // console.log(err);
+    console.log(err);
     return res.status(500).json(err);
   }
 };

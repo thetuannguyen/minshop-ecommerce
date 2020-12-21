@@ -402,7 +402,7 @@ function Home() {
                 products
                   .filter((e) => !e.isDeleted)
                   .sort((a, b) => b.amount - a.amount)
-                  .slice(0, 8)
+                  .slice(0, 16)
                   .map((e) => (
                     <div className="col-item col-xs-6 col-md-3">
                       <div className="item-container">
@@ -837,6 +837,48 @@ function Home() {
                 <h3 style={{ fontSize: "24px" }}>{blogs[1].title}</h3>
                 <p className="max-3-line">{parseHTML(blogs[1].content)}</p>
                 <Link className="link-to" to={`/blog/${blogs[1]._id}`}>
+                  Đọc thêm <i className="fa fa-angle-right" />
+                </Link>
+              </div>
+            </div>
+          )}
+          {blogs && blogs.length > 2 && (
+            <div className="blog-container" id="blog1">
+              <div
+                className="blog-thumbnail"
+                style={{
+                  backgroundImage: `url("/images/${blogs[2].cover}")`,
+                }}
+              >
+                <Link to={`/blog/${blogs[2]._id}`}>
+                  <span className="cross" />
+                </Link>
+              </div>
+              <div className="blog-content">
+                <h3 style={{ fontSize: "24px" }}>{blogs[2].title}</h3>
+                <p className="max-3-line">{parseHTML(blogs[2].content)}</p>
+                <Link className="link-to" to={`/blog/${blogs[2]._id}`}>
+                  Đọc thêm <i className="fa fa-angle-right" />
+                </Link>
+              </div>
+            </div>
+          )}
+          {blogs && blogs.length > 3 && (
+            <div className="blog-container" id="blog2">
+              <div
+                className="blog-thumbnail"
+                style={{
+                  backgroundImage: `url("/images/${blogs[3].cover}")`,
+                }}
+              >
+                <Link to={`/blog/${blogs[3]._id}`}>
+                  <span className="cross" />
+                </Link>
+              </div>
+              <div className="blog-content">
+                <h3 style={{ fontSize: "24px" }}>{blogs[3].title}</h3>
+                <p className="max-3-line">{parseHTML(blogs[3].content)}</p>
+                <Link className="link-to" to={`/blog/${blogs[3]._id}`}>
                   Đọc thêm <i className="fa fa-angle-right" />
                 </Link>
               </div>

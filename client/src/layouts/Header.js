@@ -248,8 +248,9 @@ function Header({ props }) {
       .post("/api/auth/register", data)
       .then((res) => {
         hideModal();
-        toastNotify("success", "Đăng ký thành công");
-        window.location.href = location.pathname;
+        Modal.success({
+          content: 'Quý khách đăng ký tài khoản thành công, vui lòng xác nhận email để đăng nhập ạ!',
+        });
       })
       .catch((err) => {
         const { errors } = err.response.data;
@@ -296,6 +297,10 @@ function Header({ props }) {
         window.location.href = location.pathname;
       })
       .catch((err) => {
+        if(err.response?.data?.errors) {
+          return toastNotify("warn", err.response.data.errors[0].message);
+        }
+        console.log(err.response)
         return toastNotify("warn", "Đã có lỗi xảy ra. Hãy thử lại");
       });
   };

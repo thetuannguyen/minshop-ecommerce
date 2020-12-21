@@ -231,6 +231,17 @@ const googleLogin = async (req, res) => {
       return res.json({ token: `Bearer ${token}` });
     }
 
+    if (!userByEmail.isActive) {
+      return res.status(400).json({
+        errors: [
+          {
+            field: "active",
+            message: "Tài khoản đã bị khóa",
+          },
+        ],
+      });
+    }
+
     const { _id, role, phone, birthday, gender } = userByEmail;
     const payload = {
       id: _id,

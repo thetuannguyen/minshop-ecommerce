@@ -35,7 +35,7 @@ function Products({ products, brands, categories, subcategories, dispatch }) {
   const [productId, setProductId] = useState("");
 
   const [searchInput, setSearchInput] = useState("");
-  const [pagination, setPagination] = useState({ current: 1, pageSize: 4 });
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 10 });
 
   const fileRef = useRef();
 

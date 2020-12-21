@@ -24,7 +24,7 @@ function Orders({
   deleteOrder,
 }) {
   const [currentTab, setCurrentTab] = useState("orders-all");
-  const [pagination, setPagination] = useState({ current: 1, pageSize: 4 });
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 8 });
 
   const [paid, setPaid] = useState(false);
   const [unpaid, setUnpaid] = useState(false);

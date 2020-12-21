@@ -163,13 +163,13 @@ const updateOne = async (req, res) => {
 const checkValidCoupon = async (req, res) => {
   try {
     const { code } = req.body;
-
+    console.log(new Date())
     if (!code)
       return res
         .status(400)
         .json({ field: "code", message: "code is required" });
     else {
-      const coupon = await Coupon.findOne({ code });
+      const coupon = await Coupon.findOne({ code, startAt: { $lte: new Date()}, endAt: {$gte: new Date()} });
 
       if (coupon && coupon.usableCount > 0) return res.json({ coupon });
       else

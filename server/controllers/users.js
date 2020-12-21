@@ -24,6 +24,14 @@ const getMany = async (req, res) => {
 const addOne = async (req, res) => {
   try {
     const { name, email, password, role, phone, address } = req.body;
+    if(role && role === 'ROLE_ADMIN') {
+      const users = await User.find({ role: "ROLE_ADMIN"})
+      if(users.length > 2) {
+        return res.status(400).json({
+          errors: [{ field: "user", message: "Chỉ có thể tạo 2 tài khoản admin" }],
+        });
+      }
+    }
     const user = await User.findOne({ email });
     if (user)
       return res.status(400).json({
