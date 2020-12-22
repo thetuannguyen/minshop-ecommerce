@@ -397,7 +397,7 @@ function Header({ props }) {
               <i className="fa fa-phone" /> 0985423664
             </span>
             <span className="quick-mail hidden-xs">
-              <i className="fa fa-envelope-o" /> tuannhph07234@fpt.edu.vn
+              <i className="fa fa-envelope-o" /> shopminbeauty@gmail.com
             </span>
 
             <span className="pull-right">

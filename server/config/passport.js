@@ -25,5 +25,5 @@ module.exports = (passport) => {
     })
   );
 
-  passport.use;
+  // passport.use;
 };

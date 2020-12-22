@@ -55,7 +55,7 @@ function Footer() {
                   </li>
                   <li>
                     <i className="fa fa-envelope-o" />
-                    Email: tuannhph07234@fpt.edu.vn
+                    Email: shopminbeauty@gmail.com
                   </li>
                 </ul>
               </div>
@@ -118,7 +118,7 @@ function Footer() {
             <div className="row">
               <p>
                 Copyright {new Date().getFullYear()}{" "}
-                <i className="fa fa-copyright" /> Designed by Tuan Nguyen
+                <i className="fa fa-copyright" /> Designed by Nguyễn Hoàng Tuấn
               </p>
             </div>
           </div>

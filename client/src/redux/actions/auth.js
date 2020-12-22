@@ -15,7 +15,7 @@ import { SET_CURRENT_USER } from "../types";
 //       }))
 
 // }
-
+// mục đích call api giưa client và server
 // Login && Set Token User
 export const login = (data) => (dispatch) => {
   axios

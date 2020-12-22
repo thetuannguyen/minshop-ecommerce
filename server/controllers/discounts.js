@@ -74,7 +74,7 @@ const getAll = async (req, res) => {
   }
 };
 
-// lấy tất cả khuyến mãi
+// lấy tất cả khuyến mãi admin 
 const getAllByAdmin = async (req, res) => {
   try {
     const discounts = await Discount.find()
