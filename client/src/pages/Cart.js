@@ -46,12 +46,12 @@ function Cart() {
   function getProductById(id) {
     return products.find((product) => product._id == id);
   }
-  useEffect(()=> {
-    if(location.state && location.state.step) {
-      console.log(location.state.step)
-      setCurrent(location.state.step)
+  useEffect(() => {
+    if (location.state && location.state.step) {
+      console.log(location.state.step);
+      setCurrent(location.state.step);
     }
-  }, [location])
+  }, [location]);
   useEffect(() => {
     if (
       typeof cart !== "undefined" &&
@@ -102,10 +102,13 @@ function Cart() {
         total:
           Object.keys(coupon).length > 0
             ? coupon.discountPrice
-              ? totalPrice - coupon.discountPrice
+              ? totalPrice -
+                coupon.discountPrice +
+                (orderData.shipType === "fast" ? 40000 : 0)
               : totalPrice -
-                Math.floor((coupon.discountRate * totalPrice) / 100)
-            : totalPrice,
+                Math.floor((coupon.discountRate * totalPrice) / 100) +
+                (orderData.shipType === "fast" ? 40000 : 0)
+            : totalPrice + (orderData.shipType === "fast" ? 40000 : 0),
         coupon: Object.keys(coupon).length > 0 ? coupon : "",
       })
       .then((res) => {
@@ -217,6 +220,10 @@ function Cart() {
                                           productId: e.productId,
                                           amount: 1,
                                         })
+                                      );
+                                      toastNotify(
+                                        "success",
+                                        "Bạn đã thêm sản phẩm"
                                       );
                                     }}
                                   >

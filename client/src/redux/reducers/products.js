@@ -247,6 +247,7 @@ export default function (state = initialState, action) {
 
       localStorage.setItem("cart", JSON.stringify(_cart));
       axios.post("/api/carts", { cart: _cart });
+      if (!_cart.length) toastNotify("warn", "Giỏ hàng trống");
       return {
         ...state,
         cart: _cart,

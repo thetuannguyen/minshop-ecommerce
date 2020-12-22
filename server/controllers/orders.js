@@ -1,14 +1,16 @@
 const mongoose = require("mongoose");
 
 const Coupon = require("../models/Coupon");
+const Discount = require("../models/Discount");
 const Order = require("../models/Order");
 const OrderHistory = require("../models/OrderHistory");
+const Product = require("../models/Product");
 const { sendMailOrder } = require("../services/nodemailer");
 
 // thêm 1 đơn hàng
 const addOne = async (req, res) => {
   try {
-    const { coupon } = req.body;
+    const { coupon, products } = req.body;
     if (!!coupon) {
       await Coupon.findByIdAndUpdate(coupon._id, {
         usableCount: coupon.usableCount - 1,
@@ -27,11 +29,24 @@ const addOne = async (req, res) => {
     });
     await newOrderHistory.save();
 
+    const discounts = await Discount.find({
+      startAt: { $lt: new Date() },
+      $or: [{ endAt: null }, { endAt: { $gte: new Date() } }],
+    }).lean();
+    const _products = await Product.find({
+      _id: { $in: products.map((e) => e.productId) },
+    })
+      .populate("brandId", ["_id", "name"])
+      .populate("categoryId", ["_id", "name"])
+      .populate("subcategoryId", ["_id", "name"])
+      .sort({ createdAt: -1 })
+      .lean();
+    const __products = await getDiscountPrice(_products, discounts);
     // send email order
     const order = await Order.findById(newOrder._id)
       .populate("products.productId", ["name", "price"])
       .populate("user", ["name", "email"]);
-    sendMailOrder(req.user.email, order);
+    sendMailOrder(req.user.email, order, __products);
 
     res.json({ success: true });
   } catch (err) {
@@ -68,10 +83,43 @@ const getAllOfUser = async (req, res) => {
   }
 };
 
+function getDiscountPrice(products, discounts) {
+  let _products = [];
+  return new Promise((resolve, reject) => {
+    try {
+      for (let i = 0; i < products.length; i++) {
+        let _isDiscount = discounts.find(
+          (e) =>
+            `${e.brand}` === `${products[i].brandId._id}` ||
+            `${e.category}` === `${products[i].categoryId._id}` ||
+            `${e.subcategory}` ===
+              (Boolean(products[i].subcategoryId)
+                ? `${products[i].subcategoryId._id}`
+                : "") ||
+            e.applyFor === "all"
+        );
+        if (typeof _isDiscount !== "undefined") {
+          let priceDiscount = _isDiscount.discountPrice
+            ? products[i].price - _isDiscount.discountPrice < 0
+              ? 0
+              : products[i].price - _isDiscount.discountPrice
+            : products[i].price -
+              Math.floor((products[i].price * _isDiscount.discountRate) / 100);
+
+          _products.push({ ...products[i], priceDiscount });
+        } else _products.push(products[i]);
+      }
+      resolve(_products);
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
 // thêm đơn hàng không cần đăng nhập
 const addOneNoAuth = async (req, res) => {
   try {
-    const { email, coupon } = req.body;
+    const { email, coupon, products } = req.body;
     const newOrder = new Order({ ...req.body });
     await newOrder.save();
     // save order history
@@ -86,12 +134,26 @@ const addOneNoAuth = async (req, res) => {
         usableCount: coupon.usableCount - 1,
       });
     }
+
+    const discounts = await Discount.find({
+      startAt: { $lt: new Date() },
+      $or: [{ endAt: null }, { endAt: { $gte: new Date() } }],
+    }).lean();
+    const _products = await Product.find({
+      _id: { $in: products.map((e) => e.productId) },
+    })
+      .populate("brandId", ["_id", "name"])
+      .populate("categoryId", ["_id", "name"])
+      .populate("subcategoryId", ["_id", "name"])
+      .sort({ createdAt: -1 })
+      .lean();
+    const __products = await getDiscountPrice(_products, discounts);
     // send email order
     const order = await Order.findById(newOrder._id)
-      .populate("products.productId", ["name", "price"])
+      .populate("products.productId", ["_id", "name", "price"])
       .populate("user", ["name", "email"]);
-    sendMailOrder(email, order);
-    res.json({ success: true });
+    sendMailOrder(email, order, __products);
+    // res.json({ success: true });
   } catch (err) {
     console.log(err);
     return res.status(500).json(err);

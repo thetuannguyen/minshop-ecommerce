@@ -369,7 +369,7 @@ function Users({ users, addUser, deleteUser, updateUser }) {
                   value={role}
                 >
                   <option value="ROLE_USER">User</option>
-                  <option value="ROLE_ADMIN">Admin</option>
+                  {/* <option value="ROLE_ADMIN">Admin</option> */}
                   {/* <option value="super-admin">Super Admin</option> */}
                 </select>
                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">

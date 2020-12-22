@@ -194,7 +194,6 @@ function Brands({ brands, dispatch }) {
     },
     {
       title: "Tên thương hiệu",
-      width: 150,
       dataIndex: "name",
       key: "name",
       fixed: "left",
@@ -209,7 +208,9 @@ function Brands({ brands, dispatch }) {
       title: "Hình ảnh",
       dataIndex: "image",
       key: "image",
-      render: (text) => <img src={`/images/${text}`} alt="image" />,
+      render: (text) => (
+        <img style={{ height: "120px" }} src={`/images/${text}`} alt="image" />
+      ),
     },
     {
       title: "Hành động",

@@ -40,25 +40,31 @@ function formatPrice(x) {
     : "";
 }
 
-const sendMailOrder = async (to, order) => {
-  console.log(order);
+const sendMailOrder = async (to, order, products) => {
   try {
-    let tableProducts = order.products.map(
-      (e) =>
-        `<tr>
+    let tableProducts = order.products.map((e) => {
+      let tmp = products.find((product) => {
+        return product._id.toString() === e.productId._id.toString();
+      });
+
+      return `<tr>
         <td style="border: 1px solid black;">${e.productId.name}</td>
         <td style="border: 1px solid black;">${e.amount}</td>
         <td style="border: 1px solid black;">${formatPrice(
-          e.productId.price
+          tmp.priceDiscount ? tmp.priceDiscount : tmp.price
         )}₫</td>
-      </tr>`
-    );
+      </tr>`;
+    });
 
     function getTotalTmp() {
-      return order.products.reduce(
-        (acc, e) => acc + e.productId.price * e.amount,
-        0
-      );
+      return order.products.reduce((acc, e) => {
+        let tmp = products.find((product) => {
+          return product._id.toString() === e.productId._id.toString();
+        });
+        return (
+          acc + (tmp.priceDiscount ? tmp.priceDiscount : tmp.price) * e.amount
+        );
+      }, 0);
     }
 
     let info = await transporter.sendMail({
