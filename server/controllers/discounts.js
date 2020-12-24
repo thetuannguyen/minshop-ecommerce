@@ -3,6 +3,7 @@ const Discount = require("../models/Discount");
 // thêm khuyến mãi
 const addOne = async (req, res) => {
   try {
+    // Destructuring 
     const {
       discountRate,
       discountPrice,
@@ -14,8 +15,10 @@ const addOne = async (req, res) => {
 
     let data = {};
     if (startAt) {
-      const _startAt = startAt.split("/");
+      const _startAt = startAt.split("/"); // 22/12/2020 or "24-12-2020"
       data = {
+        // spread operator , copy lại 1 thằng data khác 
+        // 22 12 2020, 2020, 12 - 1, 22, 0 tháng 11 
         ...data,
         startAt:
           _startAt.length > 1
@@ -50,6 +53,7 @@ const addOne = async (req, res) => {
       .populate("category", "name")
       .populate("brand", "name")
       .populate("subcategory", "name");
+      // method chaining
     res.json(_discount);
   } catch (err) {
     console.log(err);
@@ -61,7 +65,9 @@ const addOne = async (req, res) => {
 const getAll = async (req, res) => {
   try {
     const discounts = await Discount.find({
+      // less than
       startAt: { $lt: new Date() },
+      // greater than or equal
       $or: [{ endAt: null }, { endAt: { $gte: new Date() } }],
     })
       .populate("category", "name")

@@ -1,14 +1,18 @@
-const voucher_codes = require("voucher-code-generator");
+const voucher_codes = require("voucher-code-generator"); 
 
+// relative path
 const Coupon = require("../models/Coupon");
 
 // tạo ra mã khuyến mãi
 function generateCoupon() {
   const possible =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    // promise : bất đồng bộ ,tác vụ chạy song song 
   return new Promise((resolve, reject) => {
     let coupon = "";
     for (var i = 0; i < 8; i++) {
+      // 0 -> 63 -> 26.8 -> 26
+      // 46.8 
       coupon += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     resolve(coupon);
@@ -163,7 +167,6 @@ const updateOne = async (req, res) => {
 const checkValidCoupon = async (req, res) => {
   try {
     const { code } = req.body;
-    console.log(new Date())
     if (!code)
       return res
         .status(400)

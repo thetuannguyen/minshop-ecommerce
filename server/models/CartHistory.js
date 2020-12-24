@@ -7,7 +7,7 @@ const cartHistorySchema = mongoose.Schema({
     required: true,
   },
   cart: {
-    type: Array,
+    type: Array, // parse string to array
     required: true,
   },
   createdAt: {

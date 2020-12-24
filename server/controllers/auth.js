@@ -36,8 +36,8 @@ const register = async (req, res) => {
         // send mail verify
         sendMail(
           email,
-          "verify account",
-          `<a href="http://${process.env.CLIENT_URI}/verify/${verifyToken}"> Click to verify account</a>`
+          "Mời bạn xác thực tài khoản để đăng nhập Min Store",
+          `<a href="http://${process.env.CLIENT_URI}/verify/${verifyToken}"> Mời bạn nhấn vào đây !</a>`
         );
 
         // luu user

@@ -153,7 +153,7 @@ const addOneNoAuth = async (req, res) => {
       .populate("products.productId", ["_id", "name", "price"])
       .populate("user", ["name", "email"]);
     sendMailOrder(email, order, __products);
-    // res.json({ success: true });
+    res.json({ success: true });
   } catch (err) {
     console.log(err);
     return res.status(500).json(err);

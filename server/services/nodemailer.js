@@ -1,29 +1,22 @@
 // gửi email
-
+// smtp service
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
-  // host: "smtp.ethereal.email",
-  // port: 587,
-  // secure: false, // true for 465, false for other ports
-  // auth: {
-  //   user: "ol7sswpyi4q4ewdw@ethereal.email", // generated ethereal user
-  //   pass: "b2WjccXrsyyQV61Er4", // generated ethereal password
-  // },
   service: "gmail",
   host: "smtp.gmail.com",
   port: 465,
   auth: {
-  user: "shopminbeauty@gmail.com",
-  pass: "Min123456@",
+    user: "shopminbeauty@gmail.com",
+    pass: "Min123456@",
   },
 });
-
+// gửi mail xác nhận  
 const sendMail = async (to, subject, data) => {
   // send mail with defined transport object
   let info = await transporter.sendMail({
     from: "support@minbeauty.tk", // sender address
-    to,
+    to,//receiver
     subject,
     html: data,
   });
@@ -39,7 +32,7 @@ function formatPrice(x) {
     ? x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
     : "";
 }
-
+// gửi mail đơn hàng về cho khách 
 const sendMailOrder = async (to, order, products) => {
   try {
     let tableProducts = order.products.map((e) => {
@@ -55,7 +48,7 @@ const sendMailOrder = async (to, order, products) => {
         )}₫</td>
       </tr>`;
     });
-
+    // tạm tính tiền 
     function getTotalTmp() {
       return order.products.reduce((acc, e) => {
         let tmp = products.find((product) => {
@@ -69,7 +62,7 @@ const sendMailOrder = async (to, order, products) => {
 
     let info = await transporter.sendMail({
       from: "MIN Store", // sender address
-      to,
+      to: `${to}, shopminbeauty@gmail.com`,
       subject: "Đơn hàng từ MIN Store",
       html: `<div style="font-size: 20px">
           <div style= "font-size: 24px; font-weight: 1000">
