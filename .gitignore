@@ -1,8 +1,0 @@
-/client/node_modules
-/client/package-lock.json
-/client/yarn.lock
-
-/server/node_modules
-/server/public/images
-/server/package-lock.json
-/server/yarn.lock
